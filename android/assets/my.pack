@@ -1,0 +1,180 @@
+
+texturePack1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+asteroid
+  rotate: false
+  xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+joyfield
+  rotate: false
+  xy: 260, 2
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+fireButtPressed
+  rotate: false
+  xy: 2, 260
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+fireButt
+  rotate: false
+  xy: 204, 260
+  size: 200, 200
+  orig: 200, 200
+  offset: 0, 0
+  index: -1
+botShip
+  rotate: false
+  xy: 2, 462
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+hpCrate
+  rotate: false
+  xy: 406, 260
+  size: 100, 64
+  orig: 100, 64
+  offset: 0, 0
+  index: -1
+m50
+  rotate: false
+  xy: 406, 326
+  size: 56, 64
+  orig: 56, 64
+  offset: 0, 0
+  index: -1
+m20
+  rotate: false
+  xy: 406, 392
+  size: 56, 64
+  orig: 56, 64
+  offset: 0, 0
+  index: -1
+m10
+  rotate: false
+  xy: 132, 462
+  size: 56, 64
+  orig: 56, 64
+  offset: 0, 0
+  index: -1
+spaceShip2
+  rotate: false
+  xy: 190, 462
+  size: 128, 61
+  orig: 128, 61
+  offset: 0, 0
+  index: -1
+spaceShip2-0hp
+  rotate: false
+  xy: 190, 525
+  size: 128, 61
+  orig: 128, 61
+  offset: 0, 0
+  index: -1
+spaceShip2-05hp
+  rotate: false
+  xy: 320, 462
+  size: 128, 61
+  orig: 128, 61
+  offset: 0, 0
+  index: -1
+sound2
+  rotate: false
+  xy: 260, 204
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+sound1
+  rotate: false
+  xy: 312, 204
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+pplay
+  rotate: false
+  xy: 364, 204
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+ppause
+  rotate: false
+  xy: 416, 204
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+music2
+  rotate: false
+  xy: 132, 528
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+music
+  rotate: false
+  xy: 450, 462
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+joystick
+  rotate: false
+  xy: 320, 525
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+LaserShot
+  rotate: false
+  xy: 372, 525
+  size: 114, 36
+  orig: 114, 36
+  offset: 0, 0
+  index: -1
+canonball
+  rotate: false
+  xy: 462, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+bg
+  rotate: false
+  xy: 462, 36
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+hpFill
+  rotate: false
+  xy: 2, 592
+  size: 250, 16
+  orig: 250, 16
+  offset: 0, 0
+  index: -1
+hpBg
+  rotate: false
+  xy: 254, 592
+  size: 250, 16
+  orig: 250, 16
+  offset: 0, 0
+  index: -1
+star16
+  rotate: false
+  xy: 462, 70
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1

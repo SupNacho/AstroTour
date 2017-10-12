@@ -1,0 +1,61 @@
+
+textureStartMenu1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+play
+  rotate: false
+  xy: 2, 2
+  size: 250, 250
+  orig: 250, 250
+  offset: 0, 0
+  index: -1
+exit
+  rotate: false
+  xy: 254, 2
+  size: 250, 250
+  orig: 250, 250
+  offset: 0, 0
+  index: -1
+sound2
+  rotate: false
+  xy: 506, 2
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+sound1
+  rotate: false
+  xy: 506, 54
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+music2
+  rotate: false
+  xy: 506, 106
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+music
+  rotate: false
+  xy: 506, 158
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+bg
+  rotate: false
+  xy: 506, 210
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+star16
+  rotate: false
+  xy: 540, 210
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
