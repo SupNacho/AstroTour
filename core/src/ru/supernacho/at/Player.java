@@ -30,7 +30,8 @@ public class Player extends Ship {
     private  Vector2 plrTripVelocity;
     private int lives;
     private int scoreCount;
-    private int money;
+    private int money = 1000;
+    private int weaponType;
     private  StringBuilder hudStringHelper;
     private  Sound gunSound;
     private  boolean isDead;
@@ -61,11 +62,13 @@ public class Player extends Ship {
         this.scoreCount = 0;
         this.isPlayer = true;
         this.weapon = new Weapon(this.game, this);
+        this.weaponType = 0;
         this.weaponDirection = new Vector2(1.0f, 0);
         this.projectileVelocity = 1000;
         this.mJoyStick = new JoyStick(as.atlas.findRegion("joyfield"), as.atlas.findRegion("joystick"));
         this.mFireButton = new FireButton(as.atlas.findRegion("fireButt"), as.atlas.findRegion("fireButtPressed"));
         this.isDead = false;
+        System.out.println(Weapon.WeaponType.values()[weaponType]);
     }
 
     public Player(GameScreen game, Sound gunSound, TextureRegion joyfield,  TextureRegion joystick,
@@ -283,7 +286,7 @@ public class Player extends Ship {
                     6.0f, 1.5f,
                     0.50f, 0.50f, 0.50f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
 
-            GameData.getInstance().setData(scoreCount, money, distanceCompleteCnt, game.getLevel());
+            GameData.getInstance().setData(scoreCount, money, distanceCompleteCnt, game.getLevel(), hp, hpMax, lives);
 
             isDead = true;
         }
@@ -332,15 +335,26 @@ public class Player extends Ship {
         this.money = money;
     }
 
+    public int getWeaponType() {
+        return weaponType;
+    }
+
+    public void setWeaponType(int weaponType) {
+        weapon.setWeapon(Weapon.WeaponType.values()[weaponType]);
+    }
+
+
     public void setHp(float hp) {
         this.hp = hp;
     }
-    public void loadPlayer(String hp, String distance, String score, String lives, String money) {
+    public void loadPlayer(String hp, String distance, String score, String lives, String money, String weaponType) {
         this.hp = Float.parseFloat(hp);
         this.distanceCompleteCnt = Float.parseFloat(distance);
         this.scoreCount = Integer.parseInt(score);
         this.lives = Integer.parseInt(lives);
         this.money = Integer.parseInt(money);
+        this.weaponType = Integer.parseInt(weaponType);
+        setWeaponType(this.weaponType);
     }
 
     public boolean isDead() {

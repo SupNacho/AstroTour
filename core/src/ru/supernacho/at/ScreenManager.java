@@ -9,7 +9,7 @@ import com.badlogic.gdx.assets.AssetManager;
 
 public class ScreenManager {
     enum ScreenType {
-        MENU, GAME, GAMEOVER
+        MENU, GAME, GAMEOVER, SHOP
     }
 
     private static final ScreenManager ourInstance = new ScreenManager();
@@ -22,12 +22,14 @@ public class ScreenManager {
     private StartScreen menuScreen;
     private GameScreen gameScreen;
     private GameOverScreen gameOverScreen;
+    private ShopScreen shopScreen;
 
     public void init(AstroTour game){
         this.game = game;
         this.menuScreen = new StartScreen(game,game.getBatch());
         this.gameScreen = new GameScreen(game,game.getBatch());
         this.gameOverScreen = new GameOverScreen(game,game.getBatch());
+        this.shopScreen = new ShopScreen(game, game.getBatch());
     }
 
     public void switchScreen(ScreenType type){
@@ -50,6 +52,10 @@ public class ScreenManager {
             case GAMEOVER:
                 Assets.getInstances().loadAssets(ScreenType.GAMEOVER);
                 game.setScreen(gameOverScreen);
+                break;
+            case SHOP:
+                Assets.getInstances().loadAssets(ScreenType.SHOP);
+                game.setScreen(shopScreen);
                 break;
             default:
                 throw new RuntimeException("ScreenManager switch case not found");

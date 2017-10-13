@@ -1,17 +1,20 @@
 package ru.supernacho.at;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 
 /**
  * Created by SuperNacho on 21.09.2017.
  */
 
-public class Background {
+public class Background implements Drawable{
 
     private class Star{
         private Vector2 position;
@@ -67,6 +70,78 @@ public class Background {
         for (Star star : mStars) {
             star.update(dt, v);
         }
+
+    }
+
+    @Override
+    public void draw(Batch batch, float x, float y, float width, float height) {
+        batch.draw(bgTexture,0,0, AstroTour.SCREEN_WIDTH, AstroTour.SCREEN_HEIGHT);
+        for (Star star : mStars) {
+            float scale = star.speed / 100.0f / 2.0f;
+            if (Math.random() < 0.01f){
+                scale *= 1.5f;
+            }
+            batch.draw(starTexture, star.position.x, star.position.y, 8,8, 16, 16, scale,scale, 0);
+        }
+    }
+
+    @Override
+    public float getLeftWidth() {
+        return 0;
+    }
+
+    @Override
+    public void setLeftWidth(float leftWidth) {
+
+    }
+
+    @Override
+    public float getRightWidth() {
+        return 0;
+    }
+
+    @Override
+    public void setRightWidth(float rightWidth) {
+
+    }
+
+    @Override
+    public float getTopHeight() {
+        return 0;
+    }
+
+    @Override
+    public void setTopHeight(float topHeight) {
+
+    }
+
+    @Override
+    public float getBottomHeight() {
+        return 0;
+    }
+
+    @Override
+    public void setBottomHeight(float bottomHeight) {
+
+    }
+
+    @Override
+    public float getMinWidth() {
+        return 0;
+    }
+
+    @Override
+    public void setMinWidth(float minWidth) {
+
+    }
+
+    @Override
+    public float getMinHeight() {
+        return 0;
+    }
+
+    @Override
+    public void setMinHeight(float minHeight) {
 
     }
 

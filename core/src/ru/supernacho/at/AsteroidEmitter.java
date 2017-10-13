@@ -68,6 +68,10 @@ public class AsteroidEmitter extends ObjectPool<Asteroid> {
         a.activate(x,y,vx,vy);
     }
 
+    public void setGenerationTime(float generationTime) {
+        this.generationTime = generationTime;
+    }
+
     @Override
     protected Asteroid newObject() {
         return new Asteroid(game, mTextureRegion);

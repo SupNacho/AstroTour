@@ -62,7 +62,7 @@ public class GameScreen implements Screen {
     private final Vector2 collisionHelper = new Vector2(0,0);
     private TextureRegion pausePlayCurr;
 
-    private FileHandle file;
+    private boolean shopReady = false;
 
     public GameScreen(AstroTour game, SpriteBatch batch){
         this.mGame = game;
@@ -72,7 +72,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        file = Gdx.files.external("save.game");
         Assets as = Assets.getInstances();
         mip = (MyInputProcessor) Gdx.input.getInputProcessor();
 
@@ -98,20 +97,26 @@ public class GameScreen implements Screen {
         pausePlayCurr = pausePlay;
         sndButton = as.atlas.findRegion("sound1");
         sndButtonPrsd = as.atlas.findRegion("sound2");
-        sndButtonCurr = sndButton;
+        if ( AstroTour.soundVolume == 1) {
+            sndButtonCurr = sndButton;
+        } else {
+            sndButtonCurr = sndButtonPrsd;
+        }
         mscButton = as.atlas.findRegion("music");
         mscButtonPrsd = as.atlas.findRegion("music2");
-        mscButtonCurr = mscButton;
+        if (AstroTour.musicVolume == 1) {
+            mscButtonCurr = mscButton;
+        } else{
+            mscButtonCurr = mscButtonPrsd;
+        }
 
         dtTemp = 0;
         level = 1;
-        distancePerLvl = 500.0f;
+        distancePerLvl = 100.0f;
 
         if (AstroTour.isSavedGame) {
-            String str = file.readString();
-            String[] strings = str.split(" ");
-            mPlayer.loadPlayer(strings[0], strings[1], strings[2], strings[3], strings[4]);
-            level = Integer.parseInt(strings[5]);
+            GameData.getInstance().loadPlayerProgress(this, mPlayer);
+            System.out.println("Loaded");
         }
 
         isPaused = false;
@@ -158,6 +163,15 @@ public class GameScreen implements Screen {
                 level++;
                 System.out.println("Level: " + level);
                 chkTimer = 1;
+                botEmitter.setGenerationTime(10000.0f);
+                asteroidEmitter.setGenerationTime(10000.0f);
+                for (Bot bot : botEmitter.getActiveList()) {
+                    if (bot.position.x > AstroTour.SCREEN_WIDTH) bot.deactivate();
+                }
+                for (Asteroid asteroid : asteroidEmitter.getActiveList()) {
+                    if (asteroid.position.x > AstroTour.SCREEN_WIDTH) asteroid.deactivate();
+                }
+                shopReady = true;
             }
         } else{
             chkTimer -= dt;
@@ -242,6 +256,13 @@ public class GameScreen implements Screen {
         if (mPlayer.isDead()){
             explosion.play(1.0f * AstroTour.soundVolume);
             ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.GAMEOVER);
+        }
+        if (shopReady && botEmitter.getActiveList().size() == 0 && asteroidEmitter.getActiveList().size() == 0){
+            GameData.getInstance().setData(mPlayer.getScoreCount(), mPlayer.getMoney(), mPlayer.getDistanceCompleteCnt(),
+                    level, mPlayer.getHp(), mPlayer.getHpMax(), mPlayer.getLives());
+            System.out.println("welcome to shop");
+            ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.SHOP);
+            shopReady = false;
         }
     }
 
@@ -545,13 +566,14 @@ public class GameScreen implements Screen {
         return mPlayer;
     }
 
+    public void setLevel(int level) {
+        this.level = level;
+    }
 
     private void savePlayerProgress() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(mPlayer.getHp()).append(" ").append(mPlayer.getDistanceCompleteCnt()).append(" ");
-        sb.append(mPlayer.getScoreCount()).append(" ").append(mPlayer.getLives()).append(" ");
-        sb.append(mPlayer.getMoney()).append(" ").append(level);
-        file.writeString(sb.toString(), false);
+        GameData.getInstance().setData(mPlayer.getScoreCount(), mPlayer.getMoney(), mPlayer.getDistanceCompleteCnt(),
+                level, mPlayer.getHp(), mPlayer.getHpMax(), mPlayer.getLives());
+        GameData.getInstance().savePlayerProgress();
     }
 
     @Override
@@ -568,6 +590,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void resume() {
+        System.out.println("Resume");
+        mip = (MyInputProcessor) Gdx.input.getInputProcessor();
     }
 
     @Override

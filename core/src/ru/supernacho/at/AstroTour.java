@@ -21,6 +21,7 @@ public class AstroTour extends Game implements ApplicationListener {
     private SpriteBatch batch;
 	private Viewport mViewport;
 	private Camera mCamera;
+    private MyInputProcessor mip;
 
     public Viewport getViewport() {
         return mViewport;
@@ -39,11 +40,12 @@ public class AstroTour extends Game implements ApplicationListener {
 		batch = new SpriteBatch();
         mCamera = new OrthographicCamera(SCREEN_WIDTH, SCREEN_HEIGHT);
         mViewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, mCamera);
-        MyInputProcessor mip = new MyInputProcessor(this);
+        mip = new MyInputProcessor(this);
         Gdx.input.setInputProcessor(mip);
         ScreenManager.getIncstance().init(this);
         ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.MENU);
 //        ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.GAMEOVER);
+//        ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.SHOP);
 	}
     @Override
 	public void resize(int width, int height){
@@ -61,6 +63,10 @@ public class AstroTour extends Game implements ApplicationListener {
     @Override
 	public void dispose () {
 		batch.dispose();
+        }
+
+        public void getInputProcessor(){
+            Gdx.input.setInputProcessor(mip);
         }
 }
 

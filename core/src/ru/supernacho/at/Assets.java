@@ -70,6 +70,12 @@ public class Assets {
                 atlas = assetManager.get("gameover.pack", TextureAtlas.class);
                 gameOverMusic = assetManager.get("over.ogg", Music.class);
                 break;
+            case SHOP:
+                assetManager.load("shop.pack", TextureAtlas.class);
+                assetManager.load("shop.fnt", BitmapFont.class);
+                assetManager.finishLoading();
+                atlas = assetManager.get("shop.pack", TextureAtlas.class);
+                break;
             default:
                 throw new RuntimeException("Assets switch case not found");
         }

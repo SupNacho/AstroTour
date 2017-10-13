@@ -1,5 +1,9 @@
 package ru.supernacho.at;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.StringBuilder;
+
 /**
  * Created by SuperNacho on 08.10.2017.
  */
@@ -7,27 +11,36 @@ package ru.supernacho.at;
 public class GameData {
     private static final GameData ourInstance = new GameData();
 
+
     public static GameData getInstance() {
         return ourInstance;
     }
 
-    private float playerScore = 0;
-    private float playerMoney = 0;
+    private int playerScore = 0;
+    private int playerMoney = 0;
     private float playerDistance = 0;
-    private float playerLevel = 0;
+    private int playerLevel = 0;
+    private float playerHp = 0;
+    private int playerLives = 0;
+    private int playerWeaponType = 0;
+    private float playerHpMax = 250;
+    private FileHandle file = Gdx.files.external("save.game");
 
-    public void setData(float score, float money, float distance, float level){
-        playerScore = score;
-        playerMoney = money;
-        playerDistance = distance;
-        playerLevel = level;
+    public void setData(int score, int money, float distance, int level, float playerHp, float playerHpMax, int lives){
+        this.playerScore = score;
+        this.playerMoney = money;
+        this.playerDistance = distance;
+        this.playerLevel = level;
+        this.playerHp = playerHp;
+        this.playerHpMax = playerHpMax;
+        this.playerLives = lives;
     }
 
     public float getPlayerScore() {
         return playerScore;
     }
 
-    public float getPlayerMoney() {
+    public int getPlayerMoney() {
         return playerMoney;
     }
 
@@ -39,6 +52,53 @@ public class GameData {
         return playerLevel;
     }
 
+    public float getPlayerHp() {
+        return playerHp;
+    }
+
+    public float getPlayerHpMax() {
+        return playerHpMax;
+    }
+
+    public void setPlayerHp(float playerHp) {
+        this.playerHp = playerHp;
+    }
+
+    public int getPlayerLives() {
+        return playerLives;
+    }
+
+    public void setPlayerLives(int playerLives) {
+        this.playerLives = playerLives;
+    }
+
+    public void setPlayerMoney(int playerMoney) {
+        this.playerMoney = playerMoney;
+    }
+
+    public void savePlayerProgress() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(playerHp).append(" ").append(playerDistance).append(" ");
+        sb.append(playerScore).append(" ").append(playerLives).append(" ");
+        sb.append(playerMoney).append(" ").append(playerWeaponType).append(" ").append(playerLevel);
+        file.writeString(sb.toString(), false);
+    }
+
+    public void loadPlayerProgress(GameScreen game, Player player){
+        String str = file.readString();
+        String[] strings = str.split(" ");
+        player.loadPlayer(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5]);
+        game.setLevel(Integer.parseInt(strings[6]));
+    }
+
     private GameData() {
+    }
+
+    public int getPlayerWeaponType() {
+        return playerWeaponType;
+    }
+
+    public void setPlayerWeaponType(int playerWeaponType) {
+        this.playerWeaponType = playerWeaponType;
     }
 }

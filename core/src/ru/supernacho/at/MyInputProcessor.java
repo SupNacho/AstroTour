@@ -1,11 +1,8 @@
 package ru.supernacho.at;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-
-import org.w3c.dom.css.Rect;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +16,6 @@ public class MyInputProcessor implements InputProcessor {
         int x;
         int y;
         boolean touched;
-        boolean touchUped;
     }
 
     private AstroTour mGame;
@@ -60,8 +56,7 @@ public class MyInputProcessor implements InputProcessor {
         touchMap.get(pointer).x = (int) temp.x;
         touchMap.get(pointer).y = (int) temp.y;
         touchMap.get(pointer).touched = true;
-        touchMap.get(pointer).touchUped = false;
-        return false;
+        return true;
     }
 
     @Override
@@ -69,7 +64,6 @@ public class MyInputProcessor implements InputProcessor {
         touchMap.get(pointer).x = 0;
         touchMap.get(pointer).y = 0;
         touchMap.get(pointer).touched = false;
-        touchMap.get(pointer).touchUped = true;
         return false;
     }
 
@@ -79,16 +73,13 @@ public class MyInputProcessor implements InputProcessor {
         touchMap.get(pointer).x = (int) temp.x;
         touchMap.get(pointer).y = (int) temp.y;
         touchMap.get(pointer).touched = true;
-        touchMap.get(pointer).touchUped = false;
         return false;
     }
 
     public boolean isTouched(int pointer){
         return touchMap.get(pointer).touched;
     }
-    public boolean isTouchUped(int pointer){
-        return touchMap.get(pointer).touchUped;
-    }
+
 
     public int getX(int pointer){
         return touchMap.get(pointer).x;

@@ -42,6 +42,10 @@ public class BotEmitter extends ObjectPool<Bot> {
         }
     }
 
+    public void setGenerationTime(float generationTime) {
+        this.generationTime = generationTime;
+    }
+
     public void setUp(float x, float y){
         Bot b = getActiveElement();
         b.activate(x,y);
