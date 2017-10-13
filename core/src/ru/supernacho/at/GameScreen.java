@@ -112,7 +112,7 @@ public class GameScreen implements Screen {
 
         dtTemp = 0;
         level = 1;
-        distancePerLvl = 100.0f;
+        distancePerLvl = 500.0f;
 
         if (AstroTour.isSavedGame) {
             GameData.getInstance().loadPlayerProgress(this, mPlayer);

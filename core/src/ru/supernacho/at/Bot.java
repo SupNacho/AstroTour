@@ -27,7 +27,7 @@ public class Bot extends Ship implements Poolable {
         this.fireRate = 2.0f;
         this.weaponDirection = new Vector2(0,0);
         this.weapon = new Weapon(game, this);
-        this.weapon.setWeapon(Weapon.WeaponType.CANON);
+        this.weapon.setWeapon(Weapon.WeaponType.BOTCANON);
         this.vy = 50;
         this.projectileVelocity = 500;
         this.isPlayer = false;

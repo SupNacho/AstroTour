@@ -1,0 +1,47 @@
+
+textureShop1.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+hpFill
+  rotate: false
+  xy: 2, 2
+  size: 250, 16
+  orig: 250, 16
+  offset: 0, 0
+  index: -1
+hpBg
+  rotate: false
+  xy: 2, 20
+  size: 250, 16
+  orig: 250, 16
+  offset: 0, 0
+  index: -1
+shopUp
+  rotate: false
+  xy: 2, 38
+  size: 100, 50
+  orig: 100, 50
+  offset: 0, 0
+  index: -1
+shopDown
+  rotate: false
+  xy: 104, 38
+  size: 100, 50
+  orig: 100, 50
+  offset: 0, 0
+  index: -1
+bg
+  rotate: false
+  xy: 2, 90
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+star16
+  rotate: false
+  xy: 36, 90
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
