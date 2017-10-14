@@ -17,44 +17,72 @@ exit
   orig: 250, 250
   offset: 0, 0
   index: -1
-sound2
+continue
   rotate: false
   xy: 506, 2
+  size: 250, 250
+  orig: 250, 250
+  offset: 0, 0
+  index: -1
+toppilot
+  rotate: false
+  xy: 758, 2
+  size: 250, 191
+  orig: 250, 191
+  offset: 0, 0
+  index: -1
+mainUp
+  rotate: false
+  xy: 2, 254
+  size: 280, 94
+  orig: 280, 94
+  offset: 0, 0
+  index: -1
+mainDown
+  rotate: false
+  xy: 2, 350
+  size: 280, 94
+  orig: 280, 94
+  offset: 0, 0
+  index: -1
+sound2
+  rotate: false
+  xy: 758, 195
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 sound1
   rotate: false
-  xy: 506, 54
+  xy: 810, 195
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 music2
   rotate: false
-  xy: 506, 106
+  xy: 862, 195
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 music
   rotate: false
-  xy: 506, 158
+  xy: 914, 195
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 bg
   rotate: false
-  xy: 506, 210
+  xy: 966, 195
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star16
   rotate: false
-  xy: 540, 210
+  xy: 1000, 195
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

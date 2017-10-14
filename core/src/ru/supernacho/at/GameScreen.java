@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.StringBuilder;
 
 
 
@@ -114,8 +112,7 @@ public class GameScreen implements Screen {
         level = 1;
         distancePerLvl = 500.0f;
 
-        if (AstroTour.isSavedGame) {
-            GameData.getInstance().loadPlayerProgress(this, mPlayer);
+        if (AstroTour.isSavedGame && GameData.getInstance().loadPlayerProgress(this, mPlayer)) {
             System.out.println("Loaded");
         }
 
@@ -223,10 +220,12 @@ public class GameScreen implements Screen {
             if (mip.isTouchedInArea(musicRect) > -1) {
                 if (AstroTour.musicVolume == 1) {
                     AstroTour.musicVolume = 0;
+                    music.pause();
                     mscButtonCurr = mscButtonPrsd;
                     chkSoundTimer = 0.5f;
                 } else {
                     AstroTour.musicVolume = 1;
+                    music.play();
                     mscButtonCurr = mscButton;
                     chkSoundTimer = 0.5f;
 

@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.StringBuilder;
 
 /**
@@ -34,6 +35,7 @@ public class ShopScreen implements Screen {
     private int playerLives;
     private TextureRegion hpBg;
     private TextureRegion hpFill;
+    private TextureRegion[] playerShip;
     private BitmapFont font;
     private StringBuilder sBhelper;
 
@@ -54,12 +56,17 @@ public class ShopScreen implements Screen {
         sBhelper = new StringBuilder(50);
         TextureAtlas atlas = Assets.getInstances().atlas;
         background = new Background(atlas);
+        playerShip = new TextureRegion[]{
+          atlas.findRegion("spaceShip2-0hp"),
+                atlas.findRegion("spaceShip2-05hp"),
+                atlas.findRegion("spaceShip2")
+        };
         vector = new Vector2(100,0);
         table = new Table();
         table.setFillParent(true);
         table.background(background);
         stage.addActor(table);
-        table.setDebug(true);
+//        table.setDebug(true);
 
         TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
         style.up = new TextureRegionDrawable(atlas.findRegion("shopUp"));
@@ -67,7 +74,7 @@ public class ShopScreen implements Screen {
         style.font = Assets.getInstances().assetManager.get("shop.fnt", BitmapFont.class);
         font = Assets.getInstances().assetManager.get("shop.fnt", BitmapFont.class);
 
-        final TextButton repair = new TextButton("Repair x " + repCost, style);
+        TextButton repair = new TextButton("Repair x " + repCost, style);
         TextButton lives = new TextButton("Buy lives x " + livesCost, style);
         TextButton laser = new TextButton("Buy Laser x " + laserCost, style);
         TextButton canon = new TextButton("Buy Canon x " + canonCost, style);
@@ -80,7 +87,6 @@ public class ShopScreen implements Screen {
         repair.addListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                System.out.println("TD");
 //                return super.touchDown(event, x, y, pointer, button);
                 return true;
             }
@@ -88,14 +94,13 @@ public class ShopScreen implements Screen {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
-                System.out.println("TU");
-                System.out.println("hp: " + hp);
-                System.out.println("hpMax: " + hpMax);
                 if (money >= repCost) {
                     money -= repCost;
                     hp = hpMax;
+                    GameData.getInstance().viewData();
                     GameData.getInstance().setPlayerHp(hpMax);
                     GameData.getInstance().setPlayerMoney(money);
+                    GameData.getInstance().viewData();
                 }
             }
         });
@@ -111,8 +116,10 @@ public class ShopScreen implements Screen {
                 if (money >= livesCost) {
                     money -= livesCost;
                     playerLives++;
+                    GameData.getInstance().viewData();
                     GameData.getInstance().setPlayerLives(playerLives);
                     GameData.getInstance().setPlayerMoney(money);
+                    GameData.getInstance().viewData();
                 }
             }
         });
@@ -157,7 +164,9 @@ public class ShopScreen implements Screen {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 super.touchUp(event, x, y, pointer, button);
+                GameData.getInstance().viewData();
                 GameData.getInstance().savePlayerProgress();
+                GameData.getInstance().viewData();
                 ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.MENU);
             }
         });
@@ -176,17 +185,15 @@ public class ShopScreen implements Screen {
             }
         });
 
-        table.columnDefaults(2);
-        table.add();
-        table.row();
-        table.add(repair).pad(10.0f);
-        table.add(lives).pad(10.0f);
-        table.row();
-        table.add(laser).pad(10.0f);
-        table.add(canon).pad(10.0f);
-        table.row();
-        table.add(exit).pad(10.0f);
-        table.add(startNextLvl).pad(10.0f);
+        table.align(Align.bottom);
+        table.padBottom(50.0f);
+        table.add(repair).pad(25.0f);
+        table.add(lives).pad(25.0f);
+        table.add(laser).pad(25.0f);
+        table.add(canon).pad(25.0f);
+        table.row().colspan(2);
+        table.add(exit).pad(25.0f);
+        table.add(startNextLvl).pad(25.0f);
 
         getPlayerData();
 
@@ -207,11 +214,18 @@ public class ShopScreen implements Screen {
         stage.act(delta);
         stage.draw();
         batch.begin();
-        batch.draw(hpBg, AstroTour.SCREEN_WIDTH/2 - 125, AstroTour.SCREEN_HEIGHT/2 +100);
-        batch.draw(hpFill, AstroTour.SCREEN_WIDTH/2 - 125, AstroTour.SCREEN_HEIGHT/2 +100,hp,hpFill.getRegionHeight());
+        batch.draw(hpBg, AstroTour.SCREEN_WIDTH/2 - 125, AstroTour.SCREEN_HEIGHT/2 +170);
+        batch.draw(hpFill, AstroTour.SCREEN_WIDTH/2 - 125, AstroTour.SCREEN_HEIGHT/2 +170,hp,hpFill.getRegionHeight());
         sBhelper.setLength(0);
-        sBhelper.append("Money: ").append(money).append("\n").append("Lives: ").append(playerLives);
-        font.draw(batch, sBhelper, AstroTour.SCREEN_WIDTH/2 - 125, AstroTour.SCREEN_HEIGHT/2 +240);
+        sBhelper.append("Money: ").append(money).append("\nLives: ").append(playerLives)
+        .append("\nWeapon: ").append(Weapon.WeaponType.values()[GameData.getInstance().getPlayerWeaponType()]);
+        font.draw(batch, sBhelper, AstroTour.SCREEN_WIDTH/2 - 125, AstroTour.SCREEN_HEIGHT/2 + 150);
+        if (hp < hpMax / 2) batch.draw(playerShip[0], AstroTour.SCREEN_WIDTH/2 - playerShip[0].getRegionWidth() / 2,
+                AstroTour.SCREEN_HEIGHT/2 +210);
+        if (hp >= hpMax / 2 && hp < hpMax) batch.draw(playerShip[1], AstroTour.SCREEN_WIDTH/2 - playerShip[0].getRegionWidth() / 2,
+                AstroTour.SCREEN_HEIGHT/2 +210);
+        if (hp == hpMax) batch.draw(playerShip[2], AstroTour.SCREEN_WIDTH/2 - playerShip[0].getRegionWidth() / 2,
+                AstroTour.SCREEN_HEIGHT/2 +210);
         batch.end();
     }
 

@@ -84,11 +84,15 @@ public class GameData {
         file.writeString(sb.toString(), false);
     }
 
-    public void loadPlayerProgress(GameScreen game, Player player){
-        String str = file.readString();
-        String[] strings = str.split(" ");
-        player.loadPlayer(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5]);
-        game.setLevel(Integer.parseInt(strings[6]));
+    public boolean loadPlayerProgress(GameScreen game, Player player){
+        if (file.exists()) {
+            String str = file.readString();
+            String[] strings = str.split(" ");
+            player.loadPlayer(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5]);
+            game.setLevel(Integer.parseInt(strings[6]));
+            return true;
+        }
+        return false;
     }
 
     private GameData() {
@@ -100,5 +104,8 @@ public class GameData {
 
     public void setPlayerWeaponType(int playerWeaponType) {
         this.playerWeaponType = playerWeaponType;
+    }
+    public void viewData(){
+        System.out.println("Pl hp - " + playerHp + " | Pl Lives - " + playerLives + " | Pl weapon - " + playerWeaponType);
     }
 }

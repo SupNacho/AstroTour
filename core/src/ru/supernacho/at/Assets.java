@@ -39,6 +39,7 @@ public class Assets {
                 assetManager.load("startmenu.pack", TextureAtlas.class);
                 assetManager.load("main.png", Texture.class);
                 assetManager.load("menuScreen.ogg", Music.class);
+                assetManager.load("mainmenu.fnt", BitmapFont.class);
                 assetManager.finishLoading();
                 atlas = assetManager.get("startmenu.pack", TextureAtlas.class);
                 menuMusic = assetManager.get("menuScreen.ogg", Music.class);
