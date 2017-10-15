@@ -90,7 +90,7 @@ public class StartScreen implements Screen {
 
 
 //        tableSound.setDebug(true);
-        tableSound.pad(0, AstroTour.SCREEN_WIDTH * 2 - 200, AstroTour.SCREEN_HEIGHT * 2 - 100, 0);
+        tableSound.pad(0, AstroTour.SCREEN_WIDTH * 2 - 200, AstroTour.SCREEN_HEIGHT  * 2 - 100, 0);
         tableSound.add(musicButt).pad(0,10,0,10);
         tableSound.add(soundButt).pad(0,10,0,10);
 
@@ -198,6 +198,7 @@ public class StartScreen implements Screen {
         update(delta);
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.setProjectionMatrix(game.getCamera().combined);
         stage.act(delta);
         stage.draw();
         batch.begin();
