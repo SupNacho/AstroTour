@@ -28,6 +28,8 @@ public class GameScreen implements Screen {
     private float chkTimer = 0.0f;
     private float chkPauseTimer = 0.0f;
     private float chkSoundTimer = 0.0f;
+    private float shopTimer = 0.0f;
+    private float shopActivationDelay = 3.0f;
     private float distancePerLvl;
     private Rectangle musicRect;
     private Rectangle soundRect;
@@ -55,12 +57,15 @@ public class GameScreen implements Screen {
     private TextureRegion mscButtonCurr;
     private TextureRegion pausePlay;
     private TextureRegion pausePlayPrsd;
+    private TextureRegion switchScreen;
+    private TextureRegion lvlComplete;
     private Sound explosion;
     private Sound bulletHit;
     private final Vector2 collisionHelper = new Vector2(0,0);
     private TextureRegion pausePlayCurr;
 
     private boolean shopReady = false;
+    private Music lvlDoneMuscic;
 
     public GameScreen(AstroTour game, SpriteBatch batch){
         this.mGame = game;
@@ -81,7 +86,7 @@ public class GameScreen implements Screen {
         font = as.assetManager.get("astrotour.fnt", BitmapFont.class);
 
         mPlayer = new Player(this);
-        botEmitter = new BotEmitter(this, mPlayer, as.atlas.findRegion("botShip"), 20, 10.0f);
+        botEmitter = new BotEmitter(this, mPlayer, as.atlas.findRegion("botShip"), 20, 5.0f);
         powerUpsEmitter = new PowerUpsEmitter(this, as.atlas);
         particleEmitter = new ParticleEmitter(as.atlas.findRegion("star16"), 200);
         asteroidEmitter = new AsteroidEmitter(this, astTex, ASTEROIDS_CNT, 2.0f);
@@ -95,6 +100,9 @@ public class GameScreen implements Screen {
         pausePlayCurr = pausePlay;
         sndButton = as.atlas.findRegion("sound1");
         sndButtonPrsd = as.atlas.findRegion("sound2");
+        switchScreen = as.atlas.findRegion("bg");
+        lvlComplete = as.atlas.findRegion("lvlComplete");
+
         if ( AstroTour.soundVolume == 1) {
             sndButtonCurr = sndButton;
         } else {
@@ -113,11 +121,11 @@ public class GameScreen implements Screen {
         distancePerLvl = 500.0f;
 
         if (AstroTour.isSavedGame && GameData.getInstance().loadPlayerProgress(this, mPlayer)) {
-            System.out.println("Loaded");
         }
 
         isPaused = false;
         explosion = as.explosion;
+        lvlDoneMuscic = Assets.getInstances().lvlDone;
         music = as.gameMusic;
         music.setLooping(true);
         music.play();
@@ -150,6 +158,14 @@ public class GameScreen implements Screen {
         batch.draw(sndButtonCurr,soundRect.x, soundRect.y);
         batch.draw(mscButtonCurr,musicRect.x, musicRect.y);
         mPlayer.renderHUD(batch, font, 50, AstroTour.SCREEN_HEIGHT - 32);
+        if (shopReady){
+            lvlDoneMuscic.setVolume((1.0f - shopTimer / shopActivationDelay) * AstroTour.musicVolume);
+            batch.draw(lvlComplete, AstroTour.SCREEN_WIDTH / 2 - lvlComplete.getRegionWidth() / 2,
+                    AstroTour.SCREEN_HEIGHT / 2 - lvlComplete.getRegionHeight() / 2);
+            batch.setColor(1.0f, 1.0f, 1.0f, shopTimer / shopActivationDelay);
+            batch.draw(switchScreen, 0, 0, AstroTour.SCREEN_WIDTH, AstroTour.SCREEN_HEIGHT);
+            batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        }
         batch.end();
     }
 
@@ -169,6 +185,11 @@ public class GameScreen implements Screen {
                     if (asteroid.position.x > AstroTour.SCREEN_WIDTH) asteroid.deactivate();
                 }
                 shopReady = true;
+                if (!Assets.getInstances().lvlDone.isPlaying()) {
+                    music.pause();
+                    lvlDoneMuscic.setVolume(AstroTour.musicVolume);
+                    lvlDoneMuscic.play();
+                }
             }
         } else{
             chkTimer -= dt;
@@ -240,7 +261,7 @@ public class GameScreen implements Screen {
         updateSNDcontroll();
         updateLvl(dt);
         checkCollision();
-        music.setVolume(0.02f * AstroTour.musicVolume);
+        music.setVolume(0.1f * AstroTour.musicVolume);
         mPlayer.update(dt);
         bulletEmitter.update(dt);
         background.update(dt, mPlayer.getVelocity());
@@ -256,12 +277,19 @@ public class GameScreen implements Screen {
             explosion.play(1.0f * AstroTour.soundVolume);
             ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.GAMEOVER);
         }
+        activateShop(dt);
+    }
+
+    private void activateShop(float dt) {
         if (shopReady && botEmitter.getActiveList().size() == 0 && asteroidEmitter.getActiveList().size() == 0){
+            shopTimer += dt;
+        }
+        if( shopReady && shopTimer >= shopActivationDelay){
             GameData.getInstance().setData(mPlayer.getScoreCount(), mPlayer.getMoney(), mPlayer.getDistanceCompleteCnt(),
                     level, mPlayer.getHp(), mPlayer.getHpMax(), mPlayer.getLives());
-            System.out.println("welcome to shop");
             ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.SHOP);
             shopReady = false;
+            shopTimer = 0.0f;
         }
     }
 

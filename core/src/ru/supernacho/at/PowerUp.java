@@ -82,6 +82,7 @@ public class PowerUp {
     }
 
     public void use (Player player){
+        Assets.getInstances().powerUp.play();
         switch (type){
             case MONEY10:
                 player.addMoney(10);

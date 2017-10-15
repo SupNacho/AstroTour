@@ -3,86 +3,58 @@ textureStartMenu1.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-play
-  rotate: false
-  xy: 2, 2
-  size: 250, 250
-  orig: 250, 250
-  offset: 0, 0
-  index: -1
-exit
-  rotate: false
-  xy: 254, 2
-  size: 250, 250
-  orig: 250, 250
-  offset: 0, 0
-  index: -1
-continue
-  rotate: false
-  xy: 506, 2
-  size: 250, 250
-  orig: 250, 250
-  offset: 0, 0
-  index: -1
-toppilot
-  rotate: false
-  xy: 758, 2
-  size: 250, 191
-  orig: 250, 191
-  offset: 0, 0
-  index: -1
 mainUp
   rotate: false
-  xy: 2, 254
+  xy: 2, 2
   size: 280, 94
   orig: 280, 94
   offset: 0, 0
   index: -1
 mainDown
   rotate: false
-  xy: 2, 350
+  xy: 284, 2
   size: 280, 94
   orig: 280, 94
   offset: 0, 0
   index: -1
 sound2
   rotate: false
-  xy: 758, 195
+  xy: 566, 2
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 sound1
   rotate: false
-  xy: 810, 195
+  xy: 618, 2
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 music2
   rotate: false
-  xy: 862, 195
+  xy: 670, 2
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 music
   rotate: false
-  xy: 914, 195
+  xy: 722, 2
   size: 50, 50
   orig: 50, 50
   offset: 0, 0
   index: -1
 bg
   rotate: false
-  xy: 966, 195
+  xy: 566, 54
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 star16
   rotate: false
-  xy: 1000, 195
+  xy: 600, 54
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

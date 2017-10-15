@@ -87,6 +87,13 @@ spaceShip2-05hp
   orig: 128, 61
   offset: 0, 0
   index: -1
+lvlComplete
+  rotate: false
+  xy: 2, 592
+  size: 300, 50
+  orig: 300, 50
+  offset: 0, 0
+  index: -1
 sound2
   rotate: false
   xy: 260, 204
@@ -159,14 +166,14 @@ bg
   index: -1
 hpFill
   rotate: false
-  xy: 2, 592
+  xy: 2, 644
   size: 250, 16
   orig: 250, 16
   offset: 0, 0
   index: -1
 hpBg
   rotate: false
-  xy: 254, 592
+  xy: 254, 644
   size: 250, 16
   orig: 250, 16
   offset: 0, 0

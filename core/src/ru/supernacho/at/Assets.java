@@ -25,7 +25,9 @@ public class Assets {
     Sound canon;
     Sound bulletHit;
     Sound collisionHit;
+    Sound powerUp;
     Music menuMusic;
+    Music lvlDone;
     Music gameMusic;
     Music gameOverMusic;
 
@@ -52,8 +54,9 @@ public class Assets {
                 assetManager.load("musket-4.wav", Sound.class);
                 assetManager.load("bullethit.mp3", Sound.class);
                 assetManager.load("collision.ogg", Sound.class);
-                assetManager.load("boost.wav", Sound.class);
+                assetManager.load("powerup.wav", Sound.class);
                 assetManager.load("mainTheme.ogg", Music.class);
+                assetManager.load("lvldone.ogg", Music.class);
                 assetManager.finishLoading();
                 atlas = assetManager.get("my.pack", TextureAtlas.class);
                 explosion = assetManager.get("explosion2.wav", Sound.class);
@@ -61,7 +64,9 @@ public class Assets {
                 canon = assetManager.get("musket-4.wav", Sound.class);
                 bulletHit = assetManager.get("bullethit.mp3", Sound.class);
                 collisionHit = assetManager.get("collision.ogg", Sound.class);
+                powerUp = assetManager.get("powerup.wav", Sound.class);
                 gameMusic = assetManager.get("mainTheme.ogg", Music.class);
+                lvlDone = assetManager.get("lvldone.ogg", Music.class);
                 break;
             case GAMEOVER:
                 assetManager.load("gameover.pack", TextureAtlas.class);

@@ -32,7 +32,7 @@ public class Asteroid extends SpaceObject implements Poolable {
         this.scale = MathUtils.random(0.1f, 1.2f);
         this.rotation = MathUtils.random(0.0f, 360.0f);
         this.angularSpeed = MathUtils.random(-45f, 45f);
-        this.hpMax = (BASE_HP * scale) + game.getPlayer().getDistanceCompleteCnt()/100 ; // Рост хп астеройдов по мере продолжительности полета игрока
+        this.hpMax = (BASE_HP * scale) + game.getLevel(); // Рост хп астеройдов по мере продолжительности полета игрока
         this.hp = hpMax;
         this.hitArea = new Circle(this.position.x, this.position.y, ASTEROID_SIZE/2 * this.scale);
         this.woundCNT = 0.0f;
@@ -132,7 +132,7 @@ public class Asteroid extends SpaceObject implements Poolable {
 
         this.scale = MathUtils.random(0.1f , 0.8f);
         this.rotation = MathUtils.random(0.0f, 360.0f);
-        this.hpMax = (BASE_HP * this.scale) + game.getPlayer().getDistanceCompleteCnt()/100; // Рост хп астеройдов в зависимости от пройденого расстояния
+        this.hpMax = (BASE_HP * this.scale) + game.getLevel(); // Рост хп астеройдов в зависимости от пройденого расстояния
         this.hp = this.hpMax;
         this.hitArea.radius = ASTEROID_SIZE/2 * this.scale;
         this.woundCNT = 0.0f;
