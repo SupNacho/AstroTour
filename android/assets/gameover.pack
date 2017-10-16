@@ -17,6 +17,20 @@ retry
   orig: 250, 250
   offset: 0, 0
   index: -1
+mainButt
+  rotate: false
+  xy: 254, 724
+  size: 250, 250
+  orig: 250, 250
+  offset: 0, 0
+  index: -1
+topresult
+  rotate: false
+  xy: 506, 724
+  size: 300, 50
+  orig: 300, 50
+  offset: 0, 0
+  index: -1
 bg
   rotate: false
   xy: 2, 976

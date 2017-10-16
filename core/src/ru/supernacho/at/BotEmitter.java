@@ -34,7 +34,6 @@ public class BotEmitter extends ObjectPool<Bot> {
         for (int i = 0; i < activeList.size(); i++) {
             activeList.get(i).update(dt);
         }
-        System.out.println("Gen time: " + generationTime);
     }
 
     public void render(SpriteBatch batch){
