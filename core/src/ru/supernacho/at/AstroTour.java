@@ -43,8 +43,8 @@ public class AstroTour extends Game implements ApplicationListener {
         mip = new MyInputProcessor(this);
         Gdx.input.setInputProcessor(mip);
         ScreenManager.getIncstance().init(this);
-//        ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.MENU);
-        ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.GAMEOVER);
+        ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.MENU);
+//        ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.GAMEOVER);
 //        ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.SHOP);
 	}
     @Override

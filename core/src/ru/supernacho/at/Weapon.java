@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Weapon {
     public enum WeaponType{
-        LASER(0), CANON(1), BOTCANON(3);
+        LASER(0), CANON(1), HEAVYLASER(2), BOTCANON(3);
 
         WeaponType(int index) {
             this.index = index;
@@ -54,6 +54,14 @@ public class Weapon {
                 this.bulletVelocity = 1000.0f;
                 this.bulletTexture = Assets.getInstances().atlas.findRegion("LaserShot");
                 this.bulletSound = Assets.getInstances().laser;
+                break;
+            case HEAVYLASER:
+                this.fireRate = 0.3f;
+                this.currentFireRate = 0.0f;
+                this.weaponDMG = 3;
+                this.bulletVelocity = 1000.0f;
+                this.bulletTexture = Assets.getInstances().atlas.findRegion("heavylaser");
+                this.bulletSound = Assets.getInstances().heavylaser;
                 break;
             case CANON:
                 this.fireRate = 0.8f;

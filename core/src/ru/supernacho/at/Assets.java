@@ -22,6 +22,7 @@ public class Assets {
     TextureAtlas atlas;
     Sound explosion;
     Sound laser;
+    Sound heavylaser;
     Sound canon;
     Sound bulletHit;
     Sound collisionHit;
@@ -55,12 +56,14 @@ public class Assets {
                 assetManager.load("bullethit.mp3", Sound.class);
                 assetManager.load("collision.ogg", Sound.class);
                 assetManager.load("powerup.wav", Sound.class);
+                assetManager.load("heavylaser.mp3", Sound.class);
                 assetManager.load("mainTheme.ogg", Music.class);
                 assetManager.load("lvldone.ogg", Music.class);
                 assetManager.finishLoading();
                 atlas = assetManager.get("my.pack", TextureAtlas.class);
                 explosion = assetManager.get("explosion2.wav", Sound.class);
                 laser = assetManager.get("laser4.wav", Sound.class);
+                heavylaser = assetManager.get("heavylaser.mp3", Sound.class);
                 canon = assetManager.get("musket-4.wav", Sound.class);
                 bulletHit = assetManager.get("bullethit.mp3", Sound.class);
                 collisionHit = assetManager.get("collision.ogg", Sound.class);

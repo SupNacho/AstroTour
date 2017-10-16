@@ -150,6 +150,13 @@ LaserShot
   orig: 114, 36
   offset: 0, 0
   index: -1
+heavylaser
+  rotate: false
+  xy: 304, 592
+  size: 114, 36
+  orig: 114, 36
+  offset: 0, 0
+  index: -1
 canonball
   rotate: false
   xy: 462, 2

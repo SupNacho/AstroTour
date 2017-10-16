@@ -41,8 +41,8 @@ public class ShopScreen implements Screen {
 
     private final int repCost = 100;
     private final int livesCost = 500;
-    private final int laserCost = 50;
-    private final int canonCost = 700;
+    private final int laserCost = 1000;
+    private final int canonCost = 500;
 
     public ShopScreen(AstroTour game, SpriteBatch batch) {
         this.game = game;
@@ -76,7 +76,7 @@ public class ShopScreen implements Screen {
 
         TextButton repair = new TextButton("Repair x " + repCost, style);
         TextButton lives = new TextButton("Buy lives x " + livesCost, style);
-        TextButton laser = new TextButton("Buy Laser x " + laserCost, style);
+        TextButton laser = new TextButton("Buy Heavy Laser x " + laserCost, style);
         TextButton canon = new TextButton("Buy Canon x " + canonCost, style);
         TextButton exit = new TextButton("Save & Exit", style);
         TextButton startNextLvl = new TextButton("Continue", style);
@@ -134,7 +134,7 @@ public class ShopScreen implements Screen {
                 super.touchUp(event, x, y, pointer, button);
                 if (money >= laserCost) {
                     money -= laserCost;
-                    GameData.getInstance().setPlayerWeaponType(Weapon.WeaponType.LASER.getIndex());
+                    GameData.getInstance().setPlayerWeaponType(Weapon.WeaponType.HEAVYLASER.getIndex());
                     GameData.getInstance().setPlayerMoney(money);
                 }
             }
