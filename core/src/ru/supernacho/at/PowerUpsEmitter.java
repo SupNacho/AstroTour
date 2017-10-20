@@ -16,12 +16,16 @@ public class PowerUpsEmitter {
     private TextureRegion money20;
     private TextureRegion money50;
     private TextureRegion medKit;
+    private TextureRegion plasmaKit;
+    private TextureRegion canonKit;
 
     public PowerUpsEmitter(GameScreen game, TextureAtlas atlas) {
         this.money10 = atlas.findRegion("m10");
         this.money20 = atlas.findRegion("m20");
         this.money50 = atlas.findRegion("m50");
         this.medKit = atlas.findRegion("hpCrate");
+        this.plasmaKit = atlas.findRegion("plasmaCrate");
+        this.canonKit = atlas.findRegion("canonUp");
         this.powerUps = new PowerUp[50];
         for (int i = 0; i < powerUps.length; i++) {
             powerUps[i] = new PowerUp(game);
@@ -46,6 +50,12 @@ public class PowerUpsEmitter {
                     case 3 :
                         renderTexture = medKit;
                         break;
+                    case 4 :
+                        renderTexture = plasmaKit;
+                        break;
+                    case 5 :
+                        renderTexture = canonKit;
+                        break;
                     default:
                         throw new RuntimeException("PowerUpsEmitter render() switch case unknown");
                 }
@@ -68,13 +78,13 @@ public class PowerUpsEmitter {
         if (bot){
             for (int i = 0; i < powerUps.length; i++) {
                 if (!powerUps[i].isActive()) {
-                    PowerUp.Type t = PowerUp.Type.values()[MathUtils.random(0,3)];
+                    PowerUp.Type t = PowerUp.Type.values()[MathUtils.random(0,PowerUp.Type.values().length-1)];
                     powerUps[i].activate(x, y, t);
                     break;
                 }
             }
         }
-        if (Math.random() < 0.1) {
+        if (Math.random() < 1.2) {
             for (int i = 0; i < powerUps.length; i++) {
                 if (!powerUps[i].isActive()) {
                     PowerUp.Type t = PowerUp.Type.values()[MathUtils.random(0,3)];

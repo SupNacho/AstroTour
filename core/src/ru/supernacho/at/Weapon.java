@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Weapon {
     public enum WeaponType{
-        LASER(0), CANON(1), HEAVYLASER(2), BOTCANON(3);
+        LASER(0), CANON(1), HEAVYLASER(2), BOTCANON(3), PLASMA_PU(4), BOTPLASMA(5);
 
         WeaponType(int index) {
             this.index = index;
@@ -31,6 +31,7 @@ public class Weapon {
     private float bulletVelocity;
     private TextureRegion bulletTexture;
     private Sound bulletSound;
+    private WeaponType activeWeapon;
 
 
     public Weapon(GameScreen game, Ship ship) {
@@ -43,6 +44,7 @@ public class Weapon {
         Vector2 weaponDirection = new Vector2(1, 0);
         this.bulletTexture = Assets.getInstances().atlas.findRegion("LaserShot");
         this.bulletSound = Assets.getInstances().laser;
+        this.activeWeapon = WeaponType.LASER;
     }
 
     public void setWeapon(WeaponType type){
@@ -54,6 +56,7 @@ public class Weapon {
                 this.bulletVelocity = 1000.0f;
                 this.bulletTexture = Assets.getInstances().atlas.findRegion("LaserShot");
                 this.bulletSound = Assets.getInstances().laser;
+                this.activeWeapon = WeaponType.LASER;
                 break;
             case HEAVYLASER:
                 this.fireRate = 0.3f;
@@ -62,14 +65,16 @@ public class Weapon {
                 this.bulletVelocity = 1000.0f;
                 this.bulletTexture = Assets.getInstances().atlas.findRegion("heavylaser");
                 this.bulletSound = Assets.getInstances().heavylaser;
+                this.activeWeapon = WeaponType.HEAVYLASER;
                 break;
             case CANON:
                 this.fireRate = 0.8f;
-                this.currentFireRate = 1.9f;
+                this.currentFireRate = 0.7f;
                 this.weaponDMG = 10;
                 this.bulletVelocity = 600.0f;
                 this.bulletTexture = Assets.getInstances().atlas.findRegion("canonball");
                 this.bulletSound = Assets.getInstances().canon;
+                this.activeWeapon = WeaponType.CANON;
                 break;
             case BOTCANON:
                 this.fireRate = 2.0f;
@@ -78,21 +83,49 @@ public class Weapon {
                 this.bulletVelocity = 500.0f;
                 this.bulletTexture = Assets.getInstances().atlas.findRegion("canonball");
                 this.bulletSound = Assets.getInstances().canon;
+                this.activeWeapon = WeaponType.BOTCANON;
+                break;
+            case PLASMA_PU:
+                this.fireRate = 0.2f;
+                this.currentFireRate = 0.0f;
+                this.weaponDMG = 5;
+                this.bulletVelocity = 500.0f;
+                this.bulletTexture = Assets.getInstances().atlas.findRegion("plasma");
+                this.bulletSound = Assets.getInstances().heavylaser;
+                this.activeWeapon = WeaponType.PLASMA_PU;
+                break;
+            case BOTPLASMA:
+                this.fireRate = 1.0f;
+                this.currentFireRate = 0.0f;
+                this.weaponDMG = 5;
+                this.bulletVelocity = 500.0f;
+                this.bulletTexture = Assets.getInstances().atlas.findRegion("plasma");
+                this.bulletSound = Assets.getInstances().heavylaser;
+                this.activeWeapon = WeaponType.PLASMA_PU;
                 break;
         }
     }
 
-    public void pressFire(float dt, int objWidth, int objHeight, float bulletVx, float bulletVy){
+    public void pressFire(float dt, int objWidth, int objHeight, float bulletVx, float bulletVy, boolean isWeaponUp){
         currentFireRate += dt;
         if (currentFireRate > fireRate){
             currentFireRate -= fireRate;
-            fire(objWidth, objHeight, bulletVx, bulletVy );
+            fire(objWidth, objHeight, bulletVx, bulletVy, isWeaponUp );
         }
     }
 
-    public void fire(int objWidth, int objHeight,  float bulletVx, float bulletVy) {
-        game.getBulletEmitter().setUp(ship.position.x + objWidth /2,
-                ship.position.y + objHeight/2,bulletVx, bulletVy, ship);
+    public void fire(int objWidth, int objHeight,  float bulletVx, float bulletVy, boolean isWeaponUp) {
+        if (isWeaponUp) {
+            game.getBulletEmitter().setUp(ship.position.x + objWidth / 2,
+                    ship.position.y + objHeight / 2, bulletVx, bulletVy, ship);
+            game.getBulletEmitter().setUp(ship.position.x + objWidth / 2,
+                    ship.position.y + objHeight / 2, bulletVx, bulletVx / 2, ship);
+            game.getBulletEmitter().setUp(ship.position.x + objWidth / 2,
+                    ship.position.y + objHeight / 2, bulletVx, -bulletVx / 2, ship);
+        } else {
+            game.getBulletEmitter().setUp(ship.position.x + objWidth / 2,
+                    ship.position.y + objHeight / 2, bulletVx, bulletVy, ship);
+        }
     }
 
     public float getBulletVelocity() {
@@ -109,5 +142,9 @@ public class Weapon {
 
     public int getWeaponDMG() {
         return weaponDMG;
+    }
+
+    public WeaponType getActiveWeapon() {
+        return activeWeapon;
     }
 }

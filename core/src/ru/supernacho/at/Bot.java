@@ -27,7 +27,30 @@ public class Bot extends Ship implements Poolable {
         this.fireRate = 2.0f;
         this.weaponDirection = new Vector2(0,0);
         this.weapon = new Weapon(game, this);
-        this.weapon.setWeapon(Weapon.WeaponType.BOTCANON);
+        int weaponType = Integer.parseInt(this.mTexture.toString().substring(7));
+        switch (weaponType){
+            case 1:
+                this.weapon.setWeapon(Weapon.WeaponType.BOTCANON);
+                break;
+            case 2:
+                this.weapon.setWeapon(Weapon.WeaponType.BOTPLASMA);
+                break;
+            case 3:
+                this.weapon.setWeapon(Weapon.WeaponType.BOTPLASMA);
+                break;
+            case 4:
+                this.weapon.setWeapon(Weapon.WeaponType.BOTCANON);
+                break;
+            case 5:
+                this.weapon.setWeapon(Weapon.WeaponType.BOTPLASMA);
+                break;
+            case 6:
+                this.weapon.setWeapon(Weapon.WeaponType.BOTCANON);
+                break;
+            default:
+                throw new RuntimeException("Uncnown bot weaponType in create case");
+        }
+
         this.vy = 50;
         this.projectileVelocity = 500;
         this.isPlayer = false;
@@ -58,7 +81,7 @@ public class Bot extends Ship implements Poolable {
             weaponDirection.set(game.getPlayer().getPosition().x + MathUtils.random(-64, 64),
                     game.getPlayer().getPosition().y + MathUtils.random(-64, 64));
             weaponDirection.sub(this.position).nor().scl(weapon.getBulletVelocity());
-            weapon.pressFire(dt, 0, 0, weaponDirection.x, weaponDirection.y);
+            weapon.pressFire(dt, 0, 0, weaponDirection.x, weaponDirection.y, false);
         }
         position.mulAdd(velocity, dt);
         if (position.x < -hitArea.radius*2){

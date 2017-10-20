@@ -32,13 +32,16 @@ public class Player extends Ship {
     private int scoreCount;
     private int money = 1000;
     private int weaponType;
+    private int previosWeaponType;
     private  StringBuilder hudStringHelper;
     private  Sound gunSound;
+    private float weaponUpTimer;
+    private boolean isWeaponUp;
     private  boolean isDead;
 
     public Player(GameScreen game) {
         Assets as = Assets.getInstances();
-        this.spsEngineThrotle = 500;
+        this.spsEngineThrotle = 1000;
         this.gunSound = as.laser;
         this.shipTextures = new TextureRegion[] {as.atlas.findRegion("spaceShip2"),
                 as.atlas.findRegion("spaceShip2-05hp"),
@@ -62,13 +65,12 @@ public class Player extends Ship {
         this.scoreCount = 0;
         this.isPlayer = true;
         this.weapon = new Weapon(this.game, this);
-        this.weaponType = 0;
+        this.weaponType = GameData.getInstance().getPlayerWeaponType();
         this.weaponDirection = new Vector2(1.0f, 0);
         this.projectileVelocity = 1000;
         this.mJoyStick = new JoyStick(as.atlas.findRegion("joyfield"), as.atlas.findRegion("joystick"));
         this.mFireButton = new FireButton(as.atlas.findRegion("fireButt"), as.atlas.findRegion("fireButtPressed"));
         this.isDead = false;
-        System.out.println(Weapon.WeaponType.values()[weaponType]);
     }
 
     public Player(GameScreen game, Sound gunSound, TextureRegion joyfield,  TextureRegion joystick,
@@ -148,8 +150,12 @@ public class Player extends Ship {
         mFireButton.render(batch);
 
     }
+
+
+
     @Override
     public void update(float dt){
+        weaponUpProcessor(dt);
 
         if (this.hp < hpMax && this.hp > hpMax /2) {
             currentTexture = shipTextures[1];
@@ -196,7 +202,7 @@ public class Player extends Ship {
         if (mFireButton.isTouched()){
             weapon.pressFire(dt, objWidth / 2, 0,
                     weaponDirection.x * weapon.getBulletVelocity(),
-                    weaponDirection.y * weapon.getBulletVelocity());
+                    weaponDirection.y * weapon.getBulletVelocity(), isWeaponUp);
         }
 
 
@@ -224,7 +230,7 @@ public class Player extends Ship {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)){
             weapon.pressFire(dt, objWidth, 0,
                     weaponDirection.x * weapon.getBulletVelocity(),
-                    weaponDirection.y * weapon.getBulletVelocity());
+                    weaponDirection.y * weapon.getBulletVelocity(), isWeaponUp);
         }
         // Ускорение прохождения дистанции в зависимости от положения коробля по координате Х
         distanceCompleteCnt += (1 + plrTripVelocity.set(position.x, 0).dst(0,0)/200) * dt;
@@ -233,7 +239,7 @@ public class Player extends Ship {
         if (woundCNT < 0.0f) woundCNT = 0.0f;
         position.mulAdd(velocity, dt);
         hitArea.setPosition(position);
-        velocity.scl(0.97f);
+        velocity.scl(0.90f);
         if (velocity.x > 0) {
             game.getParticleEmitter().setup(position.x - objWidth / 2 + 20, position.y + 20,
                     -MathUtils.random(5.0f, 10.0f), MathUtils.random(-10.0f, 10.0f), 0.2f, 1.5f, 0.5f,
@@ -244,6 +250,29 @@ public class Player extends Ship {
         }
     }
 
+    public void setWeaponUp(Weapon.WeaponType newWeapon){
+        isWeaponUp = true;
+        previosWeaponType = weapon.getActiveWeapon().getIndex();
+        System.out.println("prev weapon - " + previosWeaponType);
+        setWeaponType(newWeapon.getIndex());
+    }
+
+    private void weaponUpProcessor(float dt) {
+        if (isWeaponUp) {
+            if (weaponUpTimer < 10.0f) {
+            weaponUpTimer += dt;
+            } else {
+                weaponUpTimer = 0.0f;
+                isWeaponUp = false;
+                setWeaponType(previosWeaponType);
+            }
+
+        }
+    }
+
+    public boolean isWeaponUp() {
+        return isWeaponUp;
+    }
 
     public void setVelocity(float x, float y) {
         this.velocity = new Vector2(x,y);

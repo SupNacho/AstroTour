@@ -12,7 +12,7 @@ public class PowerUp {
 
 
     enum Type {
-        MONEY10(0), MONEY20(1), MONEY50(2), MEDKIT(3);
+        MONEY10(0), MONEY20(1), MONEY50(2), MEDKIT(3), PLASMAKIT(4), CANONKIT(5);
 
         int number;
 
@@ -82,7 +82,7 @@ public class PowerUp {
     }
 
     public void use (Player player){
-        Assets.getInstances().powerUp.play();
+        Assets.getInstances().powerUp.play(AstroTour.soundVolume);
         switch (type){
             case MONEY10:
                 player.addMoney(10);
@@ -107,6 +107,22 @@ public class PowerUp {
                 break;
             case MEDKIT:
                 player.setShipRegen(50.0f);
+                game.getParticleEmitter().setup(position.x, position.y,
+                        velocity.x, velocity.y, 0.6f,
+                        3.0f, 1.5f,
+                        0.00f, 0.80f, 0.0f, 0.80f, 0.0f, 0.0f, 0.0f, 0.1f);
+                break;
+            case PLASMAKIT:
+//                player.setWeaponType(Weapon.WeaponType.PLASMA_PU.getIndex());
+                player.setWeaponUp(Weapon.WeaponType.PLASMA_PU);
+                game.getParticleEmitter().setup(position.x, position.y,
+                        velocity.x, velocity.y, 0.6f,
+                        3.0f, 1.5f,
+                        0.00f, 0.80f, 0.0f, 0.80f, 0.0f, 0.0f, 0.0f, 0.1f);
+                break;
+            case CANONKIT:
+//                player.setWeaponType(Weapon.WeaponType.PLASMA_PU.getIndex());
+                player.setWeaponUp(Weapon.WeaponType.CANON);
                 game.getParticleEmitter().setup(position.x, position.y,
                         velocity.x, velocity.y, 0.6f,
                         3.0f, 1.5f,

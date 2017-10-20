@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -38,6 +39,9 @@ public class GameScreen implements Screen {
     private float dtTemp;
     private MyInputProcessor mip;
     private Music music;
+
+    private TextureRegion planet;
+    private Vector2 planetPos;
 
 
     private AsteroidEmitter asteroidEmitter;
@@ -82,11 +86,17 @@ public class GameScreen implements Screen {
         TextureRegion botShot = as.atlas.findRegion("canonball");
         TextureRegion astTex = as.atlas.findRegion("asteroid");
         TextureRegion laserShot = as.atlas.findRegion("LaserShot");
+
+        planet = as.atlas.findRegion("planet"+MathUtils.random(1,6));
+        String planetType = planet.toString().substring(6);
+        planetPos = new Vector2(AstroTour.SCREEN_WIDTH,
+                MathUtils.random(0 - planet.getRegionHeight()/2, AstroTour.SCREEN_HEIGHT - planet.getRegionHeight()/2));
+
         bulletHit = as.bulletHit;
         font = as.assetManager.get("astrotour.fnt", BitmapFont.class);
 
         mPlayer = new Player(this);
-        botEmitter = new BotEmitter(this, mPlayer, as.atlas.findRegion("botShip"), 20, 5.0f);
+        botEmitter = new BotEmitter(this, mPlayer, as.atlas.findRegion("botShip"+planetType), 20, 5.0f);
         powerUpsEmitter = new PowerUpsEmitter(this, as.atlas);
         particleEmitter = new ParticleEmitter(as.atlas.findRegion("star16"), 200);
         asteroidEmitter = new AsteroidEmitter(this, astTex, ASTEROIDS_CNT, 2.0f);
@@ -148,6 +158,7 @@ public class GameScreen implements Screen {
         batch.setProjectionMatrix(mGame.getCamera().combined);
         batch.begin();
         background.render(batch);
+        batch.draw(planet, planetPos.x, planetPos.y);
         asteroidEmitter.render(batch);
         powerUpsEmitter.render(batch);
         botEmitter.render(batch);
@@ -258,6 +269,7 @@ public class GameScreen implements Screen {
     }
 
     public void update(float dt){
+        planetMotion(dt);
         updateSNDcontroll();
         updateLvl(dt);
         checkCollision();
@@ -278,6 +290,14 @@ public class GameScreen implements Screen {
             ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.GAMEOVER);
         }
         activateShop(dt);
+    }
+
+    private void planetMotion(float dt) {
+        if (!shopReady) {
+            planetPos.x = AstroTour.SCREEN_WIDTH - (mPlayer.getDistanceCompleteCnt() % distancePerLvl) * (AstroTour.SCREEN_WIDTH / distancePerLvl);
+        } else {
+            planetPos.x -= 30 * dt;
+        }
     }
 
     private void activateShop(float dt) {
