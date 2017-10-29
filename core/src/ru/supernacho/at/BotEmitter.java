@@ -52,7 +52,7 @@ public class BotEmitter extends ObjectPool<Bot> {
     }
     public void setUp(){
         Bot b = getActiveElement();
-        float x = MathUtils.random(AstroTour.SCREEN_WIDTH + 512, AstroTour.SCREEN_WIDTH * 3);
+        float x = MathUtils.random(AstroTour.SCREEN_WIDTH + 128, AstroTour.SCREEN_WIDTH * 1.5f);
         float y = MathUtils.random(0.0f, AstroTour.SCREEN_HEIGHT);
         b.activate(x,y);
     }

@@ -30,10 +30,10 @@ public class Bot extends Ship implements Poolable {
         int weaponType = Integer.parseInt(this.mTexture.toString().substring(7));
         switch (weaponType){
             case 1:
-                this.weapon.setWeapon(Weapon.WeaponType.BOTCANON);
+                this.weapon.setWeapon(Weapon.WeaponType.BOTPLASMA);
                 break;
             case 2:
-                this.weapon.setWeapon(Weapon.WeaponType.BOTPLASMA);
+                this.weapon.setWeapon(Weapon.WeaponType.BOTCANON);
                 break;
             case 3:
                 this.weapon.setWeapon(Weapon.WeaponType.BOTPLASMA);
@@ -42,13 +42,13 @@ public class Bot extends Ship implements Poolable {
                 this.weapon.setWeapon(Weapon.WeaponType.BOTCANON);
                 break;
             case 5:
-                this.weapon.setWeapon(Weapon.WeaponType.BOTPLASMA);
-                break;
-            case 6:
                 this.weapon.setWeapon(Weapon.WeaponType.BOTCANON);
                 break;
+            case 6:
+                this.weapon.setWeapon(Weapon.WeaponType.BOTPLASMA);
+                break;
             default:
-                throw new RuntimeException("Uncnown bot weaponType in create case");
+                throw new RuntimeException("Unknown bot weaponType in create case");
         }
 
         this.vy = 50;

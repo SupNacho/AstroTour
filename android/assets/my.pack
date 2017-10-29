@@ -192,23 +192,37 @@ joystick
   orig: 50, 50
   offset: 0, 0
   index: -1
-plasma
+starkaiter
+  rotate: false
+  xy: 964, 394
+  size: 40, 48
+  orig: 40, 48
+  offset: 0, 0
+  index: -1
+plasmamg
   rotate: false
   xy: 906, 408
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
+plasma
+  rotate: false
+  xy: 906, 549
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 canonball
   rotate: false
-  xy: 964, 394
+  xy: 940, 549
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 bg
   rotate: false
-  xy: 906, 549
+  xy: 974, 549
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

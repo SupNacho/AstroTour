@@ -84,7 +84,7 @@ public class PowerUpsEmitter {
                 }
             }
         }
-        if (Math.random() < 1.2) {
+        if (Math.random() < 0.25) {
             for (int i = 0; i < powerUps.length; i++) {
                 if (!powerUps[i].isActive()) {
                     PowerUp.Type t = PowerUp.Type.values()[MathUtils.random(0,3)];

@@ -31,6 +31,7 @@ public class Assets {
     Music lvlDone;
     Music gameMusic;
     Music gameOverMusic;
+    Music weaponUp;
 
     private Assets(){
         assetManager = new AssetManager();
@@ -59,6 +60,7 @@ public class Assets {
                 assetManager.load("heavylaser.mp3", Sound.class);
                 assetManager.load("mainTheme.ogg", Music.class);
                 assetManager.load("lvldone.ogg", Music.class);
+                assetManager.load("weaponup.wav", Music.class);
                 assetManager.finishLoading();
                 atlas = assetManager.get("my.pack", TextureAtlas.class);
                 explosion = assetManager.get("explosion2.wav", Sound.class);
@@ -70,6 +72,7 @@ public class Assets {
                 powerUp = assetManager.get("powerup.wav", Sound.class);
                 gameMusic = assetManager.get("mainTheme.ogg", Music.class);
                 lvlDone = assetManager.get("lvldone.ogg", Music.class);
+                weaponUp = assetManager.get("weaponup.wav", Music.class);
                 break;
             case GAMEOVER:
                 assetManager.load("gameover.pack", TextureAtlas.class);

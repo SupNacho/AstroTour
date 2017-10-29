@@ -1,5 +1,6 @@
 package ru.supernacho.at;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -39,7 +40,7 @@ public class PowerUp {
         this.velocity = new Vector2(0,0);
         this.active = false;
         this.time = 0;
-        this.maxTime = 6.0f;
+        this.maxTime = 6.0f;;
         this.hitArea = new Circle(0,0, 32);
         this.game = game;
     }

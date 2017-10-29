@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -21,6 +20,13 @@ import com.badlogic.gdx.math.Vector2;
 
 public class GameScreen implements Screen {
 
+    private float astGenerationTime = 2.0f;
+    private float botGenerationTime = 5.0f;
+    private int lvlPlanet;
+    private float planetScale;
+    private Vector2 planetBotsPos;
+    private float planetBotsYdelta;
+    private float planetBotsScale;
     private AstroTour mGame;
     private SpriteBatch batch;
     private Player mPlayer;
@@ -42,6 +48,8 @@ public class GameScreen implements Screen {
 
     private TextureRegion planet;
     private Vector2 planetPos;
+    private Vector2 planetBotsVelocity;
+    private float timer = 0.0f;
 
 
     private AsteroidEmitter asteroidEmitter;
@@ -63,6 +71,7 @@ public class GameScreen implements Screen {
     private TextureRegion pausePlayPrsd;
     private TextureRegion switchScreen;
     private TextureRegion lvlComplete;
+    private TextureRegion planetBotTexture;
     private Sound explosion;
     private Sound bulletHit;
     private final Vector2 collisionHelper = new Vector2(0,0);
@@ -87,19 +96,18 @@ public class GameScreen implements Screen {
         TextureRegion astTex = as.atlas.findRegion("asteroid");
         TextureRegion laserShot = as.atlas.findRegion("LaserShot");
 
-        planet = as.atlas.findRegion("planet"+MathUtils.random(1,6));
-        String planetType = planet.toString().substring(6);
-        planetPos = new Vector2(AstroTour.SCREEN_WIDTH,
-                MathUtils.random(0 - planet.getRegionHeight()/2, AstroTour.SCREEN_HEIGHT - planet.getRegionHeight()/2));
+//        planet = as.atlas.findRegion("planet"+MathUtils.random(1,6));
+//        String planetType = planet.toString().substring(6);
+
 
         bulletHit = as.bulletHit;
         font = as.assetManager.get("astrotour.fnt", BitmapFont.class);
 
         mPlayer = new Player(this);
-        botEmitter = new BotEmitter(this, mPlayer, as.atlas.findRegion("botShip"+planetType), 20, 5.0f);
+//        botEmitter = new BotEmitter(this, mPlayer, as.atlas.findRegion("botShip"+planetType), 20, botGenerationTime);
         powerUpsEmitter = new PowerUpsEmitter(this, as.atlas);
         particleEmitter = new ParticleEmitter(as.atlas.findRegion("star16"), 200);
-        asteroidEmitter = new AsteroidEmitter(this, astTex, ASTEROIDS_CNT, 2.0f);
+        asteroidEmitter = new AsteroidEmitter(this, astTex, ASTEROIDS_CNT, astGenerationTime);
         bulletEmitter = new BulletEmitter(laserShot, botShot, 100, mPlayer);
         pauseRect = new Rectangle(AstroTour.SCREEN_WIDTH - 55, AstroTour.SCREEN_HEIGHT - 55, 50, 50);
         soundRect = new Rectangle(AstroTour.SCREEN_WIDTH - 110, AstroTour.SCREEN_HEIGHT - 55, 50, 50);
@@ -131,7 +139,24 @@ public class GameScreen implements Screen {
         distancePerLvl = 500.0f;
 
         if (AstroTour.isSavedGame && GameData.getInstance().loadPlayerProgress(this, mPlayer)) {
+//            botEmitter.setGenerationTime(botGenerationTime - (mPlayer.getDistanceCompleteCnt()%distancePerLvl)/100);
+//            asteroidEmitter.setGenerationTime(astGenerationTime - mPlayer.getDistanceCompleteCnt()/10000);
+
         }
+        if (level > 6){
+            lvlPlanet = level%6+1;
+        } else {
+            lvlPlanet = level;
+        }
+
+        planetScale = MathUtils.random(0.6f, 1.0f);
+        planet = as.atlas.findRegion("planet"+lvlPlanet);
+        botEmitter = new BotEmitter(this, mPlayer, as.atlas.findRegion("botShip"+lvlPlanet), 20, botGenerationTime);
+        planetPos = new Vector2(AstroTour.SCREEN_WIDTH,
+                MathUtils.random(0 - planet.getRegionHeight()/2, AstroTour.SCREEN_HEIGHT - planet.getRegionHeight()/2));
+        planetBotsPos = new Vector2(planetPos.x, planetPos.y);
+        planetBotTexture = as.atlas.findRegion("botShip"+lvlPlanet);
+        planetBotsVelocity = new Vector2(10,0);
 
         isPaused = false;
         explosion = as.explosion;
@@ -153,12 +178,13 @@ public class GameScreen implements Screen {
             pausePlayCurr = pausePlayPrsd;
         }
         update(dt);
+        timer += dt;
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setProjectionMatrix(mGame.getCamera().combined);
         batch.begin();
         background.render(batch);
-        batch.draw(planet, planetPos.x, planetPos.y);
+        planetView();
         asteroidEmitter.render(batch);
         powerUpsEmitter.render(batch);
         botEmitter.render(batch);
@@ -180,19 +206,63 @@ public class GameScreen implements Screen {
         batch.end();
     }
 
+    private void planetView() {
+        batch.draw(planet, planetPos.x, planetPos.y, planet.getRegionWidth() * planetScale,
+                planet.getRegionHeight() * planetScale);
+        if (!shopReady) {
+            float rotation = 180.0f;
+            batch.draw(planetBotTexture, planetBotsPos.x, planetBotsPos.y + planetBotsYdelta,
+                    (float) planetBotTexture.getRegionWidth() / 2, (float) planetBotTexture.getRegionHeight() / 2,
+                    (float) planetBotTexture.getRegionWidth(),
+                    (float) planetBotTexture.getRegionHeight(), planetBotsScale, planetBotsScale, rotation);
+            batch.draw(planetBotTexture, planetBotsPos.x, planetBotsPos.y,
+                    (float) planetBotTexture.getRegionWidth() / 2, (float) planetBotTexture.getRegionHeight() / 2,
+                    (float) planetBotTexture.getRegionWidth(),
+                    (float) planetBotTexture.getRegionHeight(), planetBotsScale, planetBotsScale, rotation);
+            batch.draw(planetBotTexture, planetBotsPos.x, planetBotsPos.y - planetBotsYdelta,
+                    (float) planetBotTexture.getRegionWidth() / 2, (float) planetBotTexture.getRegionHeight() / 2,
+                    (float) planetBotTexture.getRegionWidth(),
+                    (float) planetBotTexture.getRegionHeight(), planetBotsScale, planetBotsScale, rotation);
+        }
+    }
+
+    private void planetAnimation(float dt){
+        if (planetBotsPos.x - planetPos.x > AstroTour.SCREEN_WIDTH) {
+            planetBotsPos.set(planetPos.x + (planet.getRegionWidth()/2 * planetScale),
+                    planetPos.y + (planet.getRegionHeight()/2) * planetScale);
+            planetBotsScale = 0.1f;
+            planetBotsYdelta = 0.0f;
+            planetBotsVelocity.x = 10.0f;
+        }
+
+        if (planetPos.y > AstroTour.SCREEN_HEIGHT / 2){
+            planetBotsPos.y -= 50 * dt;
+        } else {
+            planetBotsPos.y += 50 * dt;
+        }
+        planetBotsVelocity.x += 2.0f;
+        planetBotsPos.mulAdd(planetBotsVelocity, dt);
+        planetBotsScale += 0.1 * dt;
+        planetBotsYdelta += 50 * dt;
+        if (planetBotsScale >= 0.5f){
+            planetBotsScale = 0.5f;
+        }
+    }
+
     private void updateLvl(float dt){
         if (chkTimer <= 0) {
             chkTimer = 0;
             if ((mPlayer.getDistanceCompleteCnt() % distancePerLvl) >= distancePerLvl - 1) {
                 level++;
-                System.out.println("Level: " + level);
                 chkTimer = 1;
                 botEmitter.setGenerationTime(10000.0f);
                 asteroidEmitter.setGenerationTime(10000.0f);
                 for (Bot bot : botEmitter.getActiveList()) {
+                    botDestruction(bot);
                     if (bot.position.x > AstroTour.SCREEN_WIDTH) bot.deactivate();
                 }
                 for (Asteroid asteroid : asteroidEmitter.getActiveList()) {
+                    asteroidDestruction(asteroid);
                     if (asteroid.position.x > AstroTour.SCREEN_WIDTH) asteroid.deactivate();
                 }
                 shopReady = true;
@@ -202,9 +272,69 @@ public class GameScreen implements Screen {
                     lvlDoneMuscic.play();
                 }
             }
+            if (!shopReady){
+               if (mPlayer.getDistanceCompleteCnt() % 100 >= 99) {
+                   botEmitter.setGenerationTime(botGenerationTime - (mPlayer.getDistanceCompleteCnt()%distancePerLvl)/150);
+                   System.out.println(botGenerationTime - (mPlayer.getDistanceCompleteCnt()%distancePerLvl)/150);
+               }
+            }
         } else{
             chkTimer -= dt;
         }
+    }
+
+    private void asteroidDestruction(Asteroid asteroid) {
+        float len = mPlayer.getPosition().dst(asteroid.getPosition());
+        float vol = 1.0f - len / AstroTour.SCREEN_WIDTH;
+        explosion.play(vol * AstroTour.soundVolume);
+        particleEmitter.setup(asteroid.getPosition().x + MathUtils.random(-24, 24), asteroid.getPosition().y + MathUtils.random(-24, 24),
+                asteroid.getVelocity().x + MathUtils.random(-24, 24), asteroid.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
+                6.0f, 1.5f,
+                0.50f, 0.50f, 0.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+        particleEmitter.setup(asteroid.getPosition().x + MathUtils.random(-24, 24), asteroid.getPosition().y + MathUtils.random(-24, 24),
+                asteroid.getVelocity().x + MathUtils.random(-24, 24), asteroid.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
+                6.0f, 1.5f,
+                0.50f, 0.00f, 0.0f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+        particleEmitter.setup(asteroid.getPosition().x + MathUtils.random(-24, 24), asteroid.getPosition().y + MathUtils.random(-24, 24),
+                asteroid.getVelocity().x + MathUtils.random(-24, 24), asteroid.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
+                6.0f, 1.5f,
+                0.50f, 0.50f, 0.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+        particleEmitter.setup(asteroid.getPosition().x + MathUtils.random(-24, 24), asteroid.getPosition().y + MathUtils.random(-24, 24),
+                asteroid.getVelocity().x + MathUtils.random(-24, 24), asteroid.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
+                6.0f, 1.5f,
+                0.50f, 0.00f, 0.0f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+        particleEmitter.setup(asteroid.getPosition().x, asteroid.getPosition().y,
+                asteroid.getVelocity().x, asteroid.getVelocity().y, 0.6f,
+                6.0f, 1.5f,
+                0.50f, 0.50f, 0.50f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+        asteroid.deactivate();
+    }
+
+    private void botDestruction(Bot bot) {
+        float len = mPlayer.getPosition().dst(bot.getPosition());
+        float vol = 1.0f - len / AstroTour.SCREEN_WIDTH;
+        explosion.play(vol * AstroTour.soundVolume);
+        particleEmitter.setup(bot.getPosition().x + MathUtils.random(-24, 24), bot.getPosition().y + MathUtils.random(-24, 24),
+                bot.getVelocity().x + MathUtils.random(-24, 24), bot.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
+                6.0f, 1.5f,
+                0.50f, 0.50f, 0.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+        particleEmitter.setup(bot.getPosition().x + MathUtils.random(-24, 24), bot.getPosition().y + MathUtils.random(-24, 24),
+                bot.getVelocity().x + MathUtils.random(-24, 24), bot.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
+                6.0f, 1.5f,
+                0.50f, 0.00f, 0.0f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+        particleEmitter.setup(bot.getPosition().x + MathUtils.random(-24, 24), bot.getPosition().y + MathUtils.random(-24, 24),
+                bot.getVelocity().x + MathUtils.random(-24, 24), bot.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
+                6.0f, 1.5f,
+                0.50f, 0.50f, 0.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+        particleEmitter.setup(bot.getPosition().x + MathUtils.random(-24, 24), bot.getPosition().y + MathUtils.random(-24, 24),
+                bot.getVelocity().x + MathUtils.random(-24, 24), bot.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
+                6.0f, 1.5f,
+                0.50f, 0.00f, 0.0f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+        particleEmitter.setup(bot.getPosition().x, bot.getPosition().y,
+                bot.getVelocity().x, bot.getVelocity().y, 0.6f,
+                6.0f, 1.5f,
+                0.50f, 0.50f, 0.50f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+        bot.deactivate();
     }
 
     public int getLevel() {
@@ -269,10 +399,11 @@ public class GameScreen implements Screen {
     }
 
     public void update(float dt){
+        planetAnimation(dt);
         planetMotion(dt);
         updateSNDcontroll();
         updateLvl(dt);
-        checkCollision();
+        checkCollision(dt);
         music.setVolume(0.1f * AstroTour.musicVolume);
         mPlayer.update(dt);
         bulletEmitter.update(dt);
@@ -314,7 +445,7 @@ public class GameScreen implements Screen {
     }
 
 
-    private void checkCollision(){
+    private void checkCollision(float dt){
 
         //Коллизии астеройдов с кораблем
 
@@ -353,6 +484,7 @@ public class GameScreen implements Screen {
             }
         }
         // Коллизии ботов с кораблем
+        int botCount = 0;
         for (int i = 0; i < botEmitter.getActiveList().size(); i++) {
             Bot bot = botEmitter.getActiveList().get(i);
             if (mPlayer.getHitArea().overlaps(bot.getHitArea())){
@@ -385,7 +517,13 @@ public class GameScreen implements Screen {
                         1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f);
 
             }
+            if (bot.getPosition().x < mPlayer.position.x) {
+                mPlayer.setTarget(bot, dt);
+                botCount++;
+            }
         }
+        if (botCount == 0) mPlayer.droneDeactivate();
+
         // Коллизии с пулей
         for (int i = 0; i < bulletEmitter.getActiveList().size(); i++) {
             Bullet b = bulletEmitter.getActiveList().get(i);
@@ -533,30 +671,7 @@ public class GameScreen implements Screen {
             dmg = mPlayer.weapon.getWeaponDMG();
         }
         if (asteroid.takeDamage(dmg)) {
-            float len = mPlayer.getPosition().dst(asteroid.getPosition());
-            float vol = 1.0f - len / AstroTour.SCREEN_WIDTH;
-            explosion.play(vol * AstroTour.soundVolume);
-            particleEmitter.setup(asteroid.getPosition().x + MathUtils.random(-24, 24), asteroid.getPosition().y + MathUtils.random(-24, 24),
-                    asteroid.getVelocity().x + MathUtils.random(-24, 24), asteroid.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
-                    6.0f, 1.5f,
-                    0.50f, 0.50f, 0.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-            particleEmitter.setup(asteroid.getPosition().x + MathUtils.random(-24, 24), asteroid.getPosition().y + MathUtils.random(-24, 24),
-                    asteroid.getVelocity().x + MathUtils.random(-24, 24), asteroid.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
-                    6.0f, 1.5f,
-                    0.50f, 0.00f, 0.0f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-            particleEmitter.setup(asteroid.getPosition().x + MathUtils.random(-24, 24), asteroid.getPosition().y + MathUtils.random(-24, 24),
-                    asteroid.getVelocity().x + MathUtils.random(-24, 24), asteroid.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
-                    6.0f, 1.5f,
-                    0.50f, 0.50f, 0.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-            particleEmitter.setup(asteroid.getPosition().x + MathUtils.random(-24, 24), asteroid.getPosition().y + MathUtils.random(-24, 24),
-                    asteroid.getVelocity().x + MathUtils.random(-24, 24), asteroid.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
-                    6.0f, 1.5f,
-                    0.50f, 0.00f, 0.0f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-            particleEmitter.setup(asteroid.getPosition().x, asteroid.getPosition().y,
-                    asteroid.getVelocity().x, asteroid.getVelocity().y, 0.6f,
-                    6.0f, 1.5f,
-                    0.50f, 0.50f, 0.50f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-            asteroid.deactivate();
+            asteroidDestruction(asteroid);
             if (isPlayer) {
                 mPlayer.setScoreCount((int)asteroid.getHpMax());
                 powerUpsEmitter.makePower(asteroid.getPosition().x, asteroid.getPosition().y, false);
@@ -567,30 +682,7 @@ public class GameScreen implements Screen {
 
     private void dmgBot(Bot bot, boolean isPlayer) {
         if (bot.takeDamage(mPlayer.weapon.getWeaponDMG())) {
-            float len = mPlayer.getPosition().dst(bot.getPosition());
-            float vol = 1.0f - len / AstroTour.SCREEN_WIDTH;
-            explosion.play(vol * AstroTour.soundVolume);
-            particleEmitter.setup(bot.getPosition().x + MathUtils.random(-24, 24), bot.getPosition().y + MathUtils.random(-24, 24),
-                    bot.getVelocity().x + MathUtils.random(-24, 24), bot.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
-                    6.0f, 1.5f,
-                    0.50f, 0.50f, 0.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-            particleEmitter.setup(bot.getPosition().x + MathUtils.random(-24, 24), bot.getPosition().y + MathUtils.random(-24, 24),
-                    bot.getVelocity().x + MathUtils.random(-24, 24), bot.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
-                    6.0f, 1.5f,
-                    0.50f, 0.00f, 0.0f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-            particleEmitter.setup(bot.getPosition().x + MathUtils.random(-24, 24), bot.getPosition().y + MathUtils.random(-24, 24),
-                    bot.getVelocity().x + MathUtils.random(-24, 24), bot.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
-                    6.0f, 1.5f,
-                    0.50f, 0.50f, 0.0f, 7.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-            particleEmitter.setup(bot.getPosition().x + MathUtils.random(-24, 24), bot.getPosition().y + MathUtils.random(-24, 24),
-                    bot.getVelocity().x + MathUtils.random(-24, 24), bot.getVelocity().y + MathUtils.random(-24, 24), 0.6f,
-                    6.0f, 1.5f,
-                    0.50f, 0.00f, 0.0f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-            particleEmitter.setup(bot.getPosition().x, bot.getPosition().y,
-                    bot.getVelocity().x, bot.getVelocity().y, 0.6f,
-                    6.0f, 1.5f,
-                    0.50f, 0.50f, 0.50f, 8.0f, 0.0f, 0.0f, 0.0f, 0.1f);
-            bot.deactivate();
+            botDestruction(bot);
             if (isPlayer) {
                 mPlayer.setScoreCount((int) bot.getHpMax() * 100);
                 powerUpsEmitter.makePower(bot.getPosition().x, bot.getPosition().y, true);
@@ -621,6 +713,10 @@ public class GameScreen implements Screen {
         GameData.getInstance().setData(mPlayer.getScoreCount(), mPlayer.getMoney(), mPlayer.getDistanceCompleteCnt(),
                 level, mPlayer.getHp(), mPlayer.getHpMax(), mPlayer.getLives());
         GameData.getInstance().savePlayerProgress();
+    }
+
+    public Music getMusic() {
+        return music;
     }
 
     @Override

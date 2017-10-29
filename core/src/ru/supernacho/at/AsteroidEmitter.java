@@ -61,7 +61,7 @@ public class AsteroidEmitter extends ObjectPool<Asteroid> {
     }
     public void setUp(){
         Asteroid a = getActiveElement();
-        float x = MathUtils.random(AstroTour.SCREEN_WIDTH + 512, AstroTour.SCREEN_WIDTH * 3);
+        float x = MathUtils.random(AstroTour.SCREEN_WIDTH + 128, AstroTour.SCREEN_WIDTH * 1.5f);
         float y = MathUtils.random(0.0f, AstroTour.SCREEN_HEIGHT);
         float vx = -MathUtils.random(120.0f, 320.0f);
         float vy = 0;

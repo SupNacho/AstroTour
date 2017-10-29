@@ -2,6 +2,7 @@ package ru.supernacho.at;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.utils.StringBuilder;
  */
 
 public class Player extends Ship {
+    private  Music weaponBoostMusic;
     private  TextureRegion mTexture;
     private  TextureRegion[] shipTextures;
     private  TextureRegion currentTexture;
@@ -38,10 +40,11 @@ public class Player extends Ship {
     private float weaponUpTimer;
     private boolean isWeaponUp;
     private  boolean isDead;
+    private Drone sKaiter;
 
     public Player(GameScreen game) {
         Assets as = Assets.getInstances();
-        this.spsEngineThrotle = 1000;
+        this.spsEngineThrotle = 1500;
         this.gunSound = as.laser;
         this.shipTextures = new TextureRegion[] {as.atlas.findRegion("spaceShip2"),
                 as.atlas.findRegion("spaceShip2-05hp"),
@@ -70,7 +73,10 @@ public class Player extends Ship {
         this.projectileVelocity = 1000;
         this.mJoyStick = new JoyStick(as.atlas.findRegion("joyfield"), as.atlas.findRegion("joystick"));
         this.mFireButton = new FireButton(as.atlas.findRegion("fireButt"), as.atlas.findRegion("fireButtPressed"));
+        this.weaponBoostMusic = Assets.getInstances().weaponUp;
+        this.weaponBoostMusic.setLooping(true);
         this.isDead = false;
+        sKaiter = new Drone(game);
     }
 
     public Player(GameScreen game, Sound gunSound, TextureRegion joyfield,  TextureRegion joystick,
@@ -112,6 +118,7 @@ public class Player extends Ship {
         batch.draw(currentTexture, position.x - objWidth /2, position.y - objHeight /2,
                 objWidth /2, objHeight /2, objWidth, objHeight,
                 1,1, velocity.y / 25);
+        sKaiter.render(batch);
     }
 
     public void renderHUD(SpriteBatch batch, BitmapFont fnt, float x, float y){
@@ -155,9 +162,12 @@ public class Player extends Ship {
 
     @Override
     public void update(float dt){
+        if (sKaiter.isActive()){
+            sKaiter.update(dt);
+        }
         weaponUpProcessor(dt);
 
-        if (this.hp < hpMax && this.hp > hpMax /2) {
+        if (this.hp < hpMax - 50 && this.hp > hpMax /2) {
             currentTexture = shipTextures[1];
         } else if (this.hp < hpMax / 2 && this.hp > 0){
             currentTexture = shipTextures[2];
@@ -171,24 +181,24 @@ public class Player extends Ship {
             shipRegen = 0;
         }
 
-        if (position.y < objWidth /2){
+        if (position.y < objHeight /2){
             if (velocity.y < 0 ){
-                position.y = objWidth /2;
+                position.y = objHeight /2;
             }
         }
-        if (position.y > AstroTour.SCREEN_HEIGHT - objWidth /2){
+        if (position.y > AstroTour.SCREEN_HEIGHT - objHeight /2){
             if (velocity.y > 0) {
-                position.y = AstroTour.SCREEN_HEIGHT - objWidth /2;
+                position.y = AstroTour.SCREEN_HEIGHT - objHeight /2;
             }
         }
-        if (position.x < objHeight /2){
+        if (position.x < objWidth /2){
             if (velocity.x < 0){
-                position.x = objHeight /2;
+                position.x = objWidth /2;
             }
         }
-        if (position.x > AstroTour.SCREEN_WIDTH - objHeight /2){
+        if (position.x > AstroTour.SCREEN_WIDTH  - objWidth /2){
             if (velocity.x > 0){
-                position.x = AstroTour.SCREEN_WIDTH - objHeight /2;
+                position.x = AstroTour.SCREEN_WIDTH - objWidth /2;
             }
         }
 
@@ -261,13 +271,27 @@ public class Player extends Ship {
         if (isWeaponUp) {
             if (weaponUpTimer < 10.0f) {
             weaponUpTimer += dt;
+                game.getMusic().pause();
+                weaponBoostMusic.setVolume(AstroTour.musicVolume);
+                weaponBoostMusic.play();
             } else {
                 weaponUpTimer = 0.0f;
                 isWeaponUp = false;
+                weaponBoostMusic.pause();
+                game.getMusic().play();
                 setWeaponType(previosWeaponType);
             }
 
         }
+    }
+
+    public void setTarget(Bot target, float dt){
+        if (!sKaiter.isActive()) sKaiter.activate();
+        sKaiter.setTarget(target, dt);
+    }
+
+    public void droneDeactivate(){
+        if (sKaiter.isActive()) sKaiter.deactivate();
     }
 
     public boolean isWeaponUp() {
