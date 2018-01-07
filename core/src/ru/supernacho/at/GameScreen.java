@@ -45,6 +45,7 @@ public class GameScreen implements Screen {
     private float dtTemp;
     private MyInputProcessor mip;
     private Music music;
+    private Music bossMusic;
 
     private TextureRegion planet;
     private Vector2 planetPos;
@@ -166,7 +167,8 @@ public class GameScreen implements Screen {
 
         isPaused = false;
         explosion = as.explosion;
-        lvlDoneMuscic = Assets.getInstances().lvlDone;
+        lvlDoneMuscic = as.lvlDone;
+        bossMusic = as.bossMusic;
         music = as.gameMusic;
         music.setLooping(true);
         music.play();
@@ -261,7 +263,10 @@ public class GameScreen implements Screen {
             chkTimer = 0;
             if ((mPlayer.getDistanceCompleteCnt() % distancePerLvl) >= distancePerLvl - 1 && !bossReady && !bossFighting) {
                 System.out.println("Boss HERE");
-                level++;
+                music.pause();
+                bossMusic.setVolume(AstroTour.musicVolume);
+                bossMusic.isLooping();
+                bossMusic.play();
                 chkTimer = 1;
                 botEmitter.setGenerationTime(10000.0f);
                 asteroidEmitter.setGenerationTime(10000.0f);
@@ -289,8 +294,10 @@ public class GameScreen implements Screen {
         }
         if (!Assets.getInstances().lvlDone.isPlaying() && bossDefeated) {
             music.pause();
+            bossMusic.stop();
             lvlDoneMuscic.setVolume(AstroTour.musicVolume);
             lvlDoneMuscic.play();
+            level++;
         }
     }
 
