@@ -44,6 +44,7 @@ public abstract class SpaceObject {
 
     public boolean takeDamage(float dmg){
         this.hp -= dmg;
+        System.out.println("DMG TAKEN: " + dmg);
         this.woundCNT += 0.2f;
         if (woundCNT > 1.0f) this.woundCNT = 1.0f;
         if (this.hp <=0 ) {

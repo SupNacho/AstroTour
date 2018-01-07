@@ -16,20 +16,4 @@ public abstract class Ship extends SpaceObject {
     protected int projectileVelocity;
     protected Weapon weapon;
 
-//    public void pressFire(float dt, int objWidth, int objHeight, float bulletVx, float bulletVy){
-//        currentFire += dt;
-//        if (currentFire > fireRate){
-//            currentFire -= fireRate;
-//            fire(objWidth, objHeight, bulletVx, bulletVy );
-//        }
-//    }
-//
-//    public void fire(int objWidth, int objHeight,  float bulletVx, float bulletVy) {
-//        game.getBulletEmitter().setUp(position.x + objWidth /2,
-//                position.y + objHeight/2,bulletVx, bulletVy, isPlayer);
-//        if(!isPlayer){
-//            Assets.getInstances().canon.play();
-//        }
-//    }
-
 }

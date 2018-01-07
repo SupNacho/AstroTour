@@ -227,6 +227,13 @@ bg
   orig: 32, 32
   offset: 0, 0
   index: -1
+bossEye
+  rotate: false
+  xy: 392, 992
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
 star16
   rotate: false
   xy: 940, 408
@@ -253,58 +260,65 @@ planet1
   orig: 450, 441
   offset: 0, 0
   index: -1
-asteroid
+boss1
   rotate: false
   xy: 2, 445
+  size: 300, 300
+  orig: 300, 300
+  offset: 0, 0
+  index: -1
+asteroid
+  rotate: false
+  xy: 2, 747
   size: 256, 256
   orig: 256, 256
   offset: 0, 0
   index: -1
 joyfield
   rotate: false
-  xy: 2, 703
+  xy: 304, 445
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
   index: -1
 fireButtPressed
   rotate: false
-  xy: 260, 445
+  xy: 304, 647
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
   index: -1
 fireButt
   rotate: false
-  xy: 260, 647
+  xy: 506, 445
   size: 200, 200
   orig: 200, 200
   offset: 0, 0
   index: -1
 spaceShip2-05hp
   rotate: false
-  xy: 2, 905
+  xy: 304, 849
   size: 128, 61
   orig: 128, 61
   offset: 0, 0
   index: -1
 lvlComplete
   rotate: false
-  xy: 462, 445
+  xy: 708, 445
   size: 300, 50
   orig: 300, 50
   offset: 0, 0
   index: -1
 hpFill
   rotate: false
-  xy: 764, 445
+  xy: 2, 1005
   size: 250, 16
   orig: 250, 16
   offset: 0, 0
   index: -1
 hpBg
   rotate: false
-  xy: 764, 463
+  xy: 708, 497
   size: 250, 16
   orig: 250, 16
   offset: 0, 0

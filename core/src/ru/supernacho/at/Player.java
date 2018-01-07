@@ -243,7 +243,9 @@ public class Player extends Ship {
                     weaponDirection.y * weapon.getBulletVelocity(), isWeaponUp);
         }
         // Ускорение прохождения дистанции в зависимости от положения коробля по координате Х
-        distanceCompleteCnt += (1 + plrTripVelocity.set(position.x, 0).dst(0,0)/200) * dt;
+        if (!game.isBossFighting()) {
+            distanceCompleteCnt += (1 + plrTripVelocity.set(position.x, 0).dst(0, 0) / 200) * dt;
+        }
 
         woundCNT -= dt * 2.0f;
         if (woundCNT < 0.0f) woundCNT = 0.0f;

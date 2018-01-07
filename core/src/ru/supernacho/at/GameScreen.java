@@ -60,6 +60,7 @@ public class GameScreen implements Screen {
     private BulletEmitter bulletEmitter;
     private PowerUpsEmitter powerUpsEmitter;
     private ParticleEmitter particleEmitter;
+    private BossEmitter bossEmitter;
     private BotEmitter botEmitter;
     private TextureRegion sndButton;
     private TextureRegion sndButtonPrsd;
@@ -78,6 +79,9 @@ public class GameScreen implements Screen {
     private TextureRegion pausePlayCurr;
 
     private boolean shopReady = false;
+    private boolean bossReady = false;
+    private boolean bossFighting = false;
+    private boolean bossDefeated = false;
     private Music lvlDoneMuscic;
 
     public GameScreen(AstroTour game, SpriteBatch batch){
@@ -109,6 +113,7 @@ public class GameScreen implements Screen {
         particleEmitter = new ParticleEmitter(as.atlas.findRegion("star16"), 200);
         asteroidEmitter = new AsteroidEmitter(this, astTex, ASTEROIDS_CNT, astGenerationTime);
         bulletEmitter = new BulletEmitter(laserShot, botShot, 100, mPlayer);
+        bossEmitter = new BossEmitter(this, 1);
         pauseRect = new Rectangle(AstroTour.SCREEN_WIDTH - 55, AstroTour.SCREEN_HEIGHT - 55, 50, 50);
         soundRect = new Rectangle(AstroTour.SCREEN_WIDTH - 110, AstroTour.SCREEN_HEIGHT - 55, 50, 50);
         musicRect = new Rectangle(AstroTour.SCREEN_WIDTH - 165, AstroTour.SCREEN_HEIGHT - 55, 50, 50);
@@ -136,12 +141,13 @@ public class GameScreen implements Screen {
 
         dtTemp = 0;
         level = 1;
-        distancePerLvl = 500.0f;
+        distancePerLvl = 20.0f;
+        bossFighting = false;
 
         if (AstroTour.isSavedGame && GameData.getInstance().loadPlayerProgress(this, mPlayer)) {
-//            botEmitter.setGenerationTime(botGenerationTime - (mPlayer.getDistanceCompleteCnt()%distancePerLvl)/100);
-//            asteroidEmitter.setGenerationTime(astGenerationTime - mPlayer.getDistanceCompleteCnt()/10000);
 
+        } else {
+            mPlayer.setWeaponType(0);
         }
         if (level > 6){
             lvlPlanet = level%6+1;
@@ -185,9 +191,10 @@ public class GameScreen implements Screen {
         batch.begin();
         background.render(batch);
         planetView();
+        bossEmitter.render(batch);
         asteroidEmitter.render(batch);
-        powerUpsEmitter.render(batch);
         botEmitter.render(batch);
+        powerUpsEmitter.render(batch);
         particleEmitter.render(batch);
         mPlayer.render(batch);
         bulletEmitter.render(batch);
@@ -195,7 +202,7 @@ public class GameScreen implements Screen {
         batch.draw(sndButtonCurr,soundRect.x, soundRect.y);
         batch.draw(mscButtonCurr,musicRect.x, musicRect.y);
         mPlayer.renderHUD(batch, font, 50, AstroTour.SCREEN_HEIGHT - 32);
-        if (shopReady){
+        if (bossDefeated){
             lvlDoneMuscic.setVolume((1.0f - shopTimer / shopActivationDelay) * AstroTour.musicVolume);
             batch.draw(lvlComplete, AstroTour.SCREEN_WIDTH / 2 - lvlComplete.getRegionWidth() / 2,
                     AstroTour.SCREEN_HEIGHT / 2 - lvlComplete.getRegionHeight() / 2);
@@ -252,7 +259,8 @@ public class GameScreen implements Screen {
     private void updateLvl(float dt){
         if (chkTimer <= 0) {
             chkTimer = 0;
-            if ((mPlayer.getDistanceCompleteCnt() % distancePerLvl) >= distancePerLvl - 1) {
+            if ((mPlayer.getDistanceCompleteCnt() % distancePerLvl) >= distancePerLvl - 1 && !bossReady && !bossFighting) {
+                System.out.println("Boss HERE");
                 level++;
                 chkTimer = 1;
                 botEmitter.setGenerationTime(10000.0f);
@@ -265,21 +273,24 @@ public class GameScreen implements Screen {
                     asteroidDestruction(asteroid);
                     if (asteroid.position.x > AstroTour.SCREEN_WIDTH) asteroid.deactivate();
                 }
-                shopReady = true;
-                if (!Assets.getInstances().lvlDone.isPlaying()) {
-                    music.pause();
-                    lvlDoneMuscic.setVolume(AstroTour.musicVolume);
-                    lvlDoneMuscic.play();
+                if (!bossFighting){
+                    bossReady = true;
                 }
             }
-            if (!shopReady){
+            if (!bossFighting){
                if (mPlayer.getDistanceCompleteCnt() % 100 >= 99) {
                    botEmitter.setGenerationTime(botGenerationTime - (mPlayer.getDistanceCompleteCnt()%distancePerLvl)/150);
                    System.out.println(botGenerationTime - (mPlayer.getDistanceCompleteCnt()%distancePerLvl)/150);
+                   System.out.println("Letim 2");
                }
             }
         } else{
             chkTimer -= dt;
+        }
+        if (!Assets.getInstances().lvlDone.isPlaying() && bossDefeated) {
+            music.pause();
+            lvlDoneMuscic.setVolume(AstroTour.musicVolume);
+            lvlDoneMuscic.play();
         }
     }
 
@@ -310,7 +321,7 @@ public class GameScreen implements Screen {
         asteroid.deactivate();
     }
 
-    private void botDestruction(Bot bot) {
+    private void botDestruction(Ship bot) {
         float len = mPlayer.getPosition().dst(bot.getPosition());
         float vol = 1.0f - len / AstroTour.SCREEN_WIDTH;
         explosion.play(vol * AstroTour.soundVolume);
@@ -412,6 +423,8 @@ public class GameScreen implements Screen {
         particleEmitter.update(dt);
         powerUpsEmitter.update(dt);
         botEmitter.update(dt);
+        bossEmitter.update(dt);
+        bossEmitter.checkPool();
         botEmitter.checkPool();
         asteroidEmitter.checkPool();
         bulletEmitter.checkPool();
@@ -432,14 +445,14 @@ public class GameScreen implements Screen {
     }
 
     private void activateShop(float dt) {
-        if (shopReady && botEmitter.getActiveList().size() == 0 && asteroidEmitter.getActiveList().size() == 0){
+        if (bossDefeated && botEmitter.getActiveList().size() == 0 && asteroidEmitter.getActiveList().size() == 0){
             shopTimer += dt;
         }
-        if( shopReady && shopTimer >= shopActivationDelay){
+        if( bossDefeated && shopTimer >= shopActivationDelay){
             GameData.getInstance().setData(mPlayer.getScoreCount(), mPlayer.getMoney(), mPlayer.getDistanceCompleteCnt(),
                     level, mPlayer.getHp(), mPlayer.getHpMax(), mPlayer.getLives());
             ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.SHOP);
-            shopReady = false;
+            bossDefeated = false;
             shopTimer = 0.0f;
         }
     }
@@ -495,7 +508,7 @@ public class GameScreen implements Screen {
                 mPlayer.getPosition().mulAdd(collisionHelper, -interLen);
                 bot.getVelocity().mulAdd(collisionHelper, interLen);
                 mPlayer.getVelocity().mulAdd(collisionHelper, -interLen);
-                dmgBot(bot, true);
+                dmgBot(bot, true, 1.0f);
                 mPlayer.takeDamage(20);
                 float partPosX;
                 float partPosY;
@@ -523,6 +536,38 @@ public class GameScreen implements Screen {
             }
         }
         if (botCount == 0) mPlayer.droneDeactivate();
+        for (int i = 0; i < bossEmitter.getActiveList().size(); i++) {
+            Boss boss = bossEmitter.getActiveList().get(i);
+            if (mPlayer.getHitArea().overlaps(boss.hitArea)){
+                float len  = mPlayer.getPosition().dst(boss.getPosition());
+                float interLen = (mPlayer.getHitArea().radius + boss.getHitArea().radius) - len;
+                collisionHelper.set(boss.getPosition()).sub(mPlayer.getPosition()).nor();
+                boss.getPosition().mulAdd(collisionHelper, interLen);
+                mPlayer.getPosition().mulAdd(collisionHelper, -interLen * 50);
+                boss.getVelocity().mulAdd(collisionHelper, interLen);
+                mPlayer.getVelocity().mulAdd(collisionHelper, -interLen * 50);
+                dmgBot(boss, true, 1.0f);
+                mPlayer.takeDamage(10);
+                float partPosX;
+                float partPosY;
+                if ( boss.getPosition().x > mPlayer.getPosition().x)
+                {
+                    partPosX = mPlayer.getPosition().x + mPlayer.getHitArea().radius;
+                } else {
+                    partPosX = mPlayer.getPosition().x - mPlayer.getHitArea().radius;
+                }
+                if ( boss.getPosition().y > mPlayer.getPosition().y)
+                {
+                    partPosY = mPlayer.getPosition().y + mPlayer.getHitArea().radius;
+                } else {
+                    partPosY = mPlayer.getPosition().y - mPlayer.getHitArea().radius;
+                }
+
+                particleEmitter.setup(partPosX, partPosY,
+                        MathUtils.random(-50.0f, 50.0f), MathUtils.random(-50.0f, 50.0f), 0.6f, 1.2f, 0.5f,
+                        1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f);
+            }
+        }
 
         // Коллизии с пулей
         for (int i = 0; i < bulletEmitter.getActiveList().size(); i++) {
@@ -546,7 +591,7 @@ public class GameScreen implements Screen {
                 for (int j = 0; j < botEmitter.getActiveList().size(); j++) {
                     Bot bot = botEmitter.getActiveList().get(j);
                     if (bot.getHitArea().contains(b.getPosition())) {
-                        dmgBot(bot, true);
+                        dmgBot(bot, true, 1.0f);
                         b.deactivate();
                         float len = mPlayer.getPosition().dst(bot.getPosition());
                         float vol = 0.8f - len / AstroTour.SCREEN_WIDTH;
@@ -557,9 +602,42 @@ public class GameScreen implements Screen {
                         break;
                     }
                 }
+                for (int k = 0; k < bossEmitter.getActiveList().size(); k++) {
+                    Boss boss = bossEmitter.getActiveList().get(k);
+                    boolean hitBossBody = false;
+                    if (boss.hitArea.contains(b.getPosition())){
+                        if (boss.getEyes().size() == 0) hitBossBody = true;
+                        for (int h = 0; h < boss.getEyes().size(); h++) {
+                            BossEye eye = boss.getEyes().get(h);
+                            if (eye.hitArea.contains(b.getPosition())){
+                                System.out.println("EYE HIT");
+                                dmgBot(eye, true, 2.0f);
+                                b.deactivate();
+                                float len = mPlayer.getPosition().dst(boss.getPosition());
+                                float vol = 0.8f - len / AstroTour.SCREEN_WIDTH;
+                                bulletHit.play(vol  * AstroTour.soundVolume);
+                                particleEmitter.setup(b.getPosition().x, b.getPosition().y,
+                                        MathUtils.random(-50.0f, 50.0f), MathUtils.random(-50.0f, 50.0f), 0.6f, 1.2f, 0.5f,
+                                        1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f);
+                                break;
+                            }
+                            if (b.getPosition().x > eye.getPosition().x + MathUtils.random(15, 100)) hitBossBody = true;
+                        }
+                        if (hitBossBody) {
+                            dmgBot(boss, true, 1.0f);
+                            b.deactivate();
+                            float len = mPlayer.getPosition().dst(boss.getPosition());
+                            float vol = 0.8f - len / AstroTour.SCREEN_WIDTH;
+                            bulletHit.play(vol * AstroTour.soundVolume);
+                            particleEmitter.setup(b.getPosition().x, b.getPosition().y,
+                                    MathUtils.random(-50.0f, 50.0f), MathUtils.random(-50.0f, 50.0f), 0.6f, 1.2f, 0.5f,
+                                    1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.5f);
+                            break;
+                        }
+                    }
+                }
             } else {
                 if (mPlayer.getHitArea().contains(b.getPosition())) {
-
                     mPlayer.takeDamage(b.getShip().weapon.getWeaponDMG());
                     b.deactivate();
                     bulletHit.play(AstroTour.soundVolume);
@@ -680,8 +758,8 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void dmgBot(Bot bot, boolean isPlayer) {
-        if (bot.takeDamage(mPlayer.weapon.getWeaponDMG())) {
+    private void dmgBot(Ship bot, boolean isPlayer, float mult) {
+        if (bot.takeDamage(mPlayer.weapon.getWeaponDMG() * mult)) {
             botDestruction(bot);
             if (isPlayer) {
                 mPlayer.setScoreCount((int) bot.getHpMax() * 100);
@@ -713,6 +791,30 @@ public class GameScreen implements Screen {
         GameData.getInstance().setData(mPlayer.getScoreCount(), mPlayer.getMoney(), mPlayer.getDistanceCompleteCnt(),
                 level, mPlayer.getHp(), mPlayer.getHpMax(), mPlayer.getLives());
         GameData.getInstance().savePlayerProgress();
+    }
+
+    public boolean isBossReady() {
+        return bossReady;
+    }
+
+    public void setBossReady(boolean bossReady) {
+        this.bossReady = bossReady;
+    }
+
+    public boolean isBossDefeated() {
+        return bossDefeated;
+    }
+
+    public void setBossDefeated(boolean bossDefeated) {
+        this.bossDefeated = bossDefeated;
+    }
+
+    public boolean isBossFighting() {
+        return bossFighting;
+    }
+
+    public void setBossFighting(boolean bossFighting) {
+        this.bossFighting = bossFighting;
     }
 
     public Music getMusic() {
