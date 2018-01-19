@@ -1,6 +1,7 @@
 package ru.supernacho.at;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
@@ -12,14 +13,20 @@ import com.badlogic.gdx.math.Vector2;
 
 public class BossEye extends Ship{
     private TextureRegion texture;
+    private TextureRegion hpFillTexture;
+    private TextureRegion hpBgTexture;
     private GameScreen game;
     private Boss boss;
     private Vector2 dPosition;
     private Vector2 hitAreaPosition;
+    private final TextureAtlas atlas;
 
     BossEye(GameScreen game, TextureRegion texture, Boss boss, Vector2 deltaPos){
         this.game = game;
         this.texture = texture;
+        atlas = Assets.getInstances().atlas;
+        this.hpFillTexture = atlas.findRegion("hpFill");
+        this.hpBgTexture = atlas.findRegion("hpBg");
         this.boss = boss;
         this.dPosition = deltaPos;
         this.objWidth = texture.getRegionWidth();
@@ -36,7 +43,7 @@ public class BossEye extends Ship{
     }
 
     public void activate(float x, float y){
-        this.hpMax = 50;
+        this.hpMax = 100;
         this.hp = hpMax;
         active = true;
     }
@@ -44,6 +51,9 @@ public class BossEye extends Ship{
     @Override
     public void render(SpriteBatch batch) {
         batch.draw(texture, position.x, position.y);
+        batch.draw(hpBgTexture, position.x, position.y - 8, 32, 5);
+        batch.draw(hpFillTexture, position.x, position.y - 8, (int)(hp / hpMax * 32), 5);
+
     }
 
     @Override

@@ -142,6 +142,7 @@ public class Boss extends Ship implements Poolable{
         game.setBossReady(false);
         float dst = player.getDistanceCompleteCnt();
         player.setDistanceCompleteCnt(dst + 1);
+        player.setMoney(player.getMoney() + 300);
 
     }
 

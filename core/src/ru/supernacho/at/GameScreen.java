@@ -769,7 +769,7 @@ public class GameScreen implements Screen {
         if (bot.takeDamage(mPlayer.weapon.getWeaponDMG() * mult)) {
             botDestruction(bot);
             if (isPlayer) {
-                mPlayer.setScoreCount((int) bot.getHpMax() * 100);
+                mPlayer.setScoreCount((int) bot.getHpMax() * 10);
                 powerUpsEmitter.makePower(bot.getPosition().x, bot.getPosition().y, true);
 //                System.out.println("Ast size: " + (asteroid.getAsteroidSize() * asteroid.getScale()) + " | Ast Radius: " + (asteroid.getHitArea().radius * 2) + " | Regen: " + asteroid.getMaxHp());
             }
