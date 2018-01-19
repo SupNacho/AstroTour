@@ -42,19 +42,19 @@ public class AsteroidEmitter extends ObjectPool<Asteroid> {
     public void render(SpriteBatch batch){
         for (int i = 0; i < activeList.size(); i++) {
             activeList.get(i).render(batch);
-//            Asteroid asteroid = activeList.get(i);
-//            float reddish = asteroid.getWounds();
-//            if (reddish > 0.01f) {
-//                batch.setColor(1.0f, 1.0f - reddish, 1.0f - reddish, 1.0f);
-//            }
-//            batch.draw(mTextureRegion, asteroid.getPosition().x - mTextureRegion.getRegionWidth()/2,
-//                    asteroid.getPosition().y - mTextureRegion.getRegionHeight()/2,
-//                    (float) asteroid.getAsteroidSize()/2, (float) asteroid.getAsteroidSize()/2,
-//                    asteroid.getAsteroidSize(), asteroid.getAsteroidSize(),
-//                    asteroid.getScale(),asteroid.getScale(), asteroid.getRotation());
-//            if (reddish > 0.01f) {
-//                batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-//            }
+            Asteroid asteroid = activeList.get(i);
+            float reddish = asteroid.getWounds();
+            if (reddish > 0.01f) {
+                batch.setColor(1.0f, 1.0f - reddish, 1.0f - reddish, 1.0f);
+            }
+            batch.draw(mTextureRegion, asteroid.getPosition().x - mTextureRegion.getRegionWidth()/2,
+                    asteroid.getPosition().y - mTextureRegion.getRegionHeight()/2,
+                    (float) asteroid.getAsteroidSize()/2, (float) asteroid.getAsteroidSize()/2,
+                    asteroid.getAsteroidSize(), asteroid.getAsteroidSize(),
+                    asteroid.getScale(),asteroid.getScale(), asteroid.getRotation());
+            if (reddish > 0.01f) {
+                batch.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+            }
         }
     }
 
