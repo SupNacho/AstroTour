@@ -13,6 +13,7 @@ public class AsteroidEmitter extends ObjectPool<Asteroid> {
     private float generationTime;
     private float innerTimer;
     private GameScreen game;
+    private boolean isStoped;
 
     public AsteroidEmitter(GameScreen game, TextureRegion textureRegion, int size, float generationTime) {
         super();
@@ -26,13 +27,15 @@ public class AsteroidEmitter extends ObjectPool<Asteroid> {
     }
 
     public void update(float dt){
-        innerTimer += dt;
-        if (innerTimer > generationTime){
-            innerTimer -= generationTime;
-            setUp();
-        }
-        for (int i = 0; i < activeList.size(); i++) {
-            activeList.get(i).update(dt);
+        if (!isStoped) {
+            innerTimer += dt;
+            if (innerTimer > generationTime) {
+                innerTimer -= generationTime;
+                setUp();
+            }
+            for (int i = 0; i < activeList.size(); i++) {
+                activeList.get(i).update(dt);
+            }
         }
     }
 
@@ -75,5 +78,13 @@ public class AsteroidEmitter extends ObjectPool<Asteroid> {
     @Override
     protected Asteroid newObject() {
         return new Asteroid(game, mTextureRegion);
+    }
+
+    public boolean isStoped() {
+        return isStoped;
+    }
+
+    public void setStoped(boolean stoped) {
+        isStoped = stoped;
     }
 }

@@ -142,7 +142,7 @@ public class GameScreen implements Screen {
 
         dtTemp = 0;
         level = 1;
-        distancePerLvl = 20.0f;
+        distancePerLvl = 500.0f;
         bossFighting = false;
 
         if (AstroTour.isSavedGame && GameData.getInstance().loadPlayerProgress(this, mPlayer)) {
@@ -268,8 +268,8 @@ public class GameScreen implements Screen {
                 bossMusic.isLooping();
                 bossMusic.play();
                 chkTimer = 1;
-                botEmitter.setGenerationTime(10000.0f);
-                asteroidEmitter.setGenerationTime(10000.0f);
+                botEmitter.setStoped(true);
+                asteroidEmitter.setStoped(true);
                 for (Bot bot : botEmitter.getActiveList()) {
                     botDestruction(bot);
                     if (bot.position.x > AstroTour.SCREEN_WIDTH) bot.deactivate();
@@ -282,11 +282,10 @@ public class GameScreen implements Screen {
                     bossReady = true;
                 }
             }
-            if (!bossFighting){
+            if (!bossFighting && !bossDefeated){
                if (mPlayer.getDistanceCompleteCnt() % 100 >= 99) {
                    botEmitter.setGenerationTime(botGenerationTime - (mPlayer.getDistanceCompleteCnt()%distancePerLvl)/150);
                    System.out.println(botGenerationTime - (mPlayer.getDistanceCompleteCnt()%distancePerLvl)/150);
-                   System.out.println("Letim 2");
                }
             }
         } else{
@@ -441,6 +440,7 @@ public class GameScreen implements Screen {
             ScreenManager.getIncstance().switchScreen(ScreenManager.ScreenType.GAMEOVER);
         }
         activateShop(dt);
+        System.out.println("Game stance: Ready: " + bossReady + " Boss Fighting: " + bossFighting + " Boss Defeated: " + bossDefeated);
     }
 
     private void planetMotion(float dt) {

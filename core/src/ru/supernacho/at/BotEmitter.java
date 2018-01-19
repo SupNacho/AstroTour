@@ -16,6 +16,7 @@ public class BotEmitter extends ObjectPool<Bot> {
     private TextureRegion botTexture;
     private float generationTime;
     private float innerTime;
+    private boolean isStoped;
 
     public BotEmitter(GameScreen game, Player player, TextureRegion botTexture, int size, float generationTime) {
         super();
@@ -23,13 +24,16 @@ public class BotEmitter extends ObjectPool<Bot> {
         this.generationTime = generationTime;
         this.game = game;
         this.player = player;
+        this.isStoped = false;
     }
 
     public void update(float dt) {
         innerTime += dt;
-        if (innerTime > generationTime) {
-            innerTime -= generationTime;
-            setUp();
+        if (!isStoped) {
+            if (innerTime > generationTime) {
+                innerTime -= generationTime;
+                setUp();
+            }
         }
         for (int i = 0; i < activeList.size(); i++) {
             activeList.get(i).update(dt);
@@ -60,5 +64,13 @@ public class BotEmitter extends ObjectPool<Bot> {
     @Override
     protected Bot newObject() {
         return new Bot(game, botTexture);
+    }
+
+    public boolean isStoped() {
+        return isStoped;
+    }
+
+    public void setStoped(boolean stoped) {
+        isStoped = stoped;
     }
 }
